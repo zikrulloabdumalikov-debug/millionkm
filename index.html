@@ -47,14 +47,8 @@
 
     .squircle { border-radius: var(--radius-ios); }
     
-    /* SF Symbols like feel for icons */
-    .sf-icon {
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
+    .animate-spring { animation: springIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    
     @keyframes springIn {
       0% { transform: scale(0.9) translateY(20px); opacity: 0; filter: blur(10px); }
       70% { transform: scale(1.02) translateY(-2px); opacity: 1; filter: blur(0); }
@@ -67,18 +61,11 @@
       100% { transform: translate(-50%, 15px) scaleX(1) scaleY(1); }
     }
 
-    .animate-spring { animation: springIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     .animate-dynamic-island { animation: islandPop 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
     
     .ios-scroll::-webkit-scrollbar { width: 0px; }
     
-    input::placeholder { color: var(--system-gray); font-weight: 400; }
-    
     .tap-active:active { transform: scale(0.96); transition: transform 0.1s ease; }
-    
-    .ios-button {
-      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
     
     .ios-card {
       transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -90,21 +77,24 @@
       transform: translateY(-4px);
     }
 
-    /* Selection Color */
     ::selection { background: rgba(0, 122, 255, 0.15); color: var(--system-blue); }
   </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.3",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
 <body class="ios-scroll">
   <div id="root"></div>
+  <!-- ASOSIY KIRISH NUQTASI -->
+  <script type="module" src="./index.tsx"></script>
 </body>
 </html>
