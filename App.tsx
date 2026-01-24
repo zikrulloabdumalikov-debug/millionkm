@@ -14,7 +14,7 @@ import NearestLocations from './components/NearestLocations';
 import Benefits from './components/Benefits';
 import { sendTelegramNotification } from './services/telegramService';
 
-// Firebase Config Mock (Prompt implies using these for initialization)
+// Firebase Config Mock
 const firebaseConfig = {
   apiKey: "AIzaSyA0zyqs1BrDKKS7kkq3nqmJSj_VpM6CVcM",
   authDomain: "millionkm-a42ee.firebaseapp.com",
@@ -34,7 +34,7 @@ const App: React.FC = () => {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Login Form State
-  const [loginForm, setLoginForm] = useState({ name: '', phone: '' });
+  const [loginForm, setLoginForm] = useState({ name: '', phone: '', password: '' });
 
   const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -79,41 +79,50 @@ const App: React.FC = () => {
   };
 
   const handleLoginSubmit = () => {
+    const isAdminMode = loginForm.name.toLowerCase() === 'admin';
+    
+    // 1. Admin Login Check (Login: admin, Parol: 123)
+    if (isAdminMode && loginForm.password === '123') {
+      const adminUser: User = {
+        uid: 'admin-1',
+        name: 'Administrator',
+        email: 'admin@million.km',
+        phone: '+9980000000',
+        gender: 'male',
+        isAdmin: true
+      };
+      
+      setCurrentUser(adminUser);
+      localStorage.setItem('million_km_user', JSON.stringify(adminUser));
+      setIsAuthModalOpen(false);
+      setLoginForm({ name: '', phone: '', password: '' });
+      showToast("Admin rejimi faollashtirildi!", "success");
+      return;
+    } else if (isAdminMode && loginForm.password !== '123') {
+      showToast("Admin paroli noto'g'ri", "error");
+      return;
+    }
+
+    // 2. Regular User Validation
     if (!loginForm.name || !loginForm.phone) {
       showToast("Iltimos, ism va telefon raqamingizni kiriting", "error");
       return;
     }
 
-    // Admin Verification Logic (Mock)
-    // In a real app, this would verify against a backend database
-    const ADMIN_PHONE = "+998901234567";
-
-    let user: User;
-
-    if (loginForm.phone.replace(/\s/g, '') === ADMIN_PHONE) {
-      user = {
-        uid: 'admin-1',
-        name: loginForm.name,
-        email: 'admin@million.km',
-        phone: loginForm.phone,
-        gender: 'male',
-        isAdmin: true
-      };
-    } else {
-      user = {
-        uid: 'user-' + Math.random().toString(36).substr(2, 9),
-        name: loginForm.name,
-        email: 'user@mail.com',
-        phone: loginForm.phone,
-        gender: 'male',
-        isAdmin: false
-      };
-    }
+    // 3. Regular User Login
+    const user: User = {
+      uid: 'user-' + Math.random().toString(36).substr(2, 9),
+      name: loginForm.name,
+      email: 'user@mail.com',
+      phone: loginForm.phone,
+      gender: 'male',
+      isAdmin: false
+    };
 
     setCurrentUser(user);
     localStorage.setItem('million_km_user', JSON.stringify(user));
     setIsAuthModalOpen(false);
-    setLoginForm({ name: '', phone: '' }); // Reset form
+    setLoginForm({ name: '', phone: '', password: '' }); 
     showToast(`Xush kelibsiz, ${user.name}!`);
   };
 
@@ -225,47 +234,67 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* AIConsultant is globally available and fixed to the viewport */}
       <AIConsultant />
 
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-md p-4 animate-in">
-          <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl relative">
+          <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl relative overflow-hidden">
             <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-8 right-8 text-gray-300 hover:text-gray-900 transition-colors">
               <i className="fas fa-times text-xl"></i>
             </button>
-            <h2 className="text-3xl font-extrabold text-[#1d1d1f] text-center mb-10 tracking-tight">Tizimga kirish</h2>
+            <h2 className="text-3xl font-extrabold text-[#1d1d1f] text-center mb-10 tracking-tight">Kirish</h2>
+            
             <div className="space-y-6">
                <div>
-                  <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-2">Ismingiz</label>
+                  <label className="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2">Ismingiz</label>
                   <input 
                     type="text" 
                     value={loginForm.name}
                     onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
-                    placeholder="Ismingizni kiriting"
+                    placeholder="Masalan: Azizbek"
                     className="w-full px-6 py-4 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none font-bold"
                   />
                </div>
-               <div>
-                  <label className="block text-xs font-bold uppercase text-gray-400 mb-2 ml-2">Telefon raqam</label>
-                  <input 
-                    type="tel" 
-                    value={loginForm.phone}
-                    onChange={(e) => setLoginForm({...loginForm, phone: e.target.value})}
-                    placeholder="+998 90 123 45 67"
-                    className="w-full px-6 py-4 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none font-bold"
-                  />
-               </div>
+
+               {/* Regular customer sees phone field, unless 'admin' is typed */}
+               {loginForm.name.toLowerCase() !== 'admin' && (
+                  <div className="animate-in fade-in duration-300">
+                    <label className="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2">Telefon raqam</label>
+                    <input 
+                      type="tel" 
+                      value={loginForm.phone}
+                      onChange={(e) => setLoginForm({...loginForm, phone: e.target.value})}
+                      placeholder="+998 90 123 45 67"
+                      className="w-full px-6 py-4 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+                    />
+                  </div>
+               )}
+               
                <button 
                 onClick={handleLoginSubmit} 
                 className="w-full bg-[#1d1d1f] text-white py-5 rounded-[1.5rem] font-bold hover:bg-blue-600 transition-all shadow-xl shadow-gray-200 mt-4 active:scale-95 uppercase tracking-widest text-xs"
                >
-                 Kirish
+                 {loginForm.name.toLowerCase() === 'admin' ? 'Admin sifatida kirish' : 'Tizimga kirish'}
                </button>
+
+               {/* HIDDEN Admin Password Field - only appears if name is 'admin' */}
+               {loginForm.name.toLowerCase() === 'admin' && (
+                 <div className="pt-6 border-t border-gray-100 mt-6 animate-in slide-in-from-top duration-300">
+                    <div className="flex flex-col items-start bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+                      <label className="text-[10px] font-black uppercase text-blue-600 mb-2 ml-1">Admin PIN kodi</label>
+                      <input 
+                        type="password" 
+                        autoFocus
+                        value={loginForm.password}
+                        onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                        placeholder="••••"
+                        className="w-full px-4 py-3 rounded-xl bg-white border border-blue-200 focus:ring-2 focus:ring-blue-500 outline-none text-sm font-bold tracking-widest"
+                      />
+                      <p className="mt-2 text-[8px] font-bold text-blue-400 uppercase tracking-tight">Faqat tizim boshqaruvchilari uchun</p>
+                    </div>
+                 </div>
+               )}
             </div>
-            <p className="mt-8 text-center text-xs text-gray-400 font-medium">
-              Agar siz admin bo'lsangiz, maxsus telefon raqamingizdan foydalaning.
-            </p>
           </div>
         </div>
       )}

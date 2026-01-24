@@ -7,6 +7,15 @@ interface AdminProps {
 }
 
 const Admin: React.FC<AdminProps> = ({ orders }) => {
+  // Calculate real stats
+  const uniqueClients = new Set(orders.map(o => o.phone)).size;
+  const totalOrders = orders.length;
+  
+  // Calculate today's orders
+  const todayStr = new Date().toLocaleDateString('uz-UZ');
+  // Order timestamp is stored as toLocaleString('uz-UZ') in App.tsx, so it should contain the date part.
+  const todayOrders = orders.filter(o => o.timestamp.includes(todayStr)).length;
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
@@ -82,16 +91,16 @@ const Admin: React.FC<AdminProps> = ({ orders }) => {
            <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
              <div className="relative z-10 space-y-12">
                <div>
-                 <div className="text-white/30 text-[9px] font-bold uppercase tracking-widest mb-4">Mijozlar bazasi</div>
-                 <div className="text-5xl font-black tracking-tighter">1,248</div>
+                 <div className="text-white/30 text-[9px] font-bold uppercase tracking-widest mb-4">Jami Mijozlar</div>
+                 <div className="text-5xl font-black tracking-tighter">{uniqueClients}</div>
                </div>
                <div>
-                 <div className="text-white/30 text-[9px] font-bold uppercase tracking-widest mb-4">Bugungi buyurtmalar</div>
-                 <div className="text-5xl font-black tracking-tighter">{orders.length}</div>
+                 <div className="text-white/30 text-[9px] font-bold uppercase tracking-widest mb-4">Jami Buyurtmalar</div>
+                 <div className="text-5xl font-black tracking-tighter">{totalOrders}</div>
                </div>
                <div>
-                 <div className="text-white/30 text-[9px] font-bold uppercase tracking-widest mb-4">Oylik o'sish</div>
-                 <div className="text-5xl font-black tracking-tighter text-blue-400">+12%</div>
+                 <div className="text-white/30 text-[9px] font-bold uppercase tracking-widest mb-4">Bugungi</div>
+                 <div className="text-5xl font-black tracking-tighter text-blue-400">{todayOrders}</div>
                </div>
              </div>
              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>

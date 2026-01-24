@@ -43,17 +43,6 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
             </button>
           </div>
         </div>
-
-        <div className="mt-24 md:mt-40 relative max-w-6xl mx-auto animate-fade-up delay-300">
-          <div className="aspect-[21/9] w-full bg-gray-100 rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/50 relative group">
-            <img 
-              src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?auto=format&fit=crop&q=80&w=2000" 
-              alt="Premium Automotive Workshop Service" 
-              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-          </div>
-        </div>
       </div>
     </div>
   );
