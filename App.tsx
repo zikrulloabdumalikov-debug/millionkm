@@ -6,7 +6,6 @@ import Hero from './components/Hero';
 import StatusChecker from './components/StatusChecker';
 import BrandGrid from './components/BrandGrid';
 import Cabinet from './components/Cabinet';
-import Admin from './components/Admin';
 import MobileService from './components/MobileService';
 import AIConsultant from './components/AIConsultant';
 import AboutUs from './components/AboutUs';
@@ -15,27 +14,19 @@ import Benefits from './components/Benefits';
 import QuickServices from './components/QuickServices';
 import { sendTelegramNotification } from './services/telegramService';
 
-type ToastType = 'success' | 'error';
-interface ToastState {
-  message: string;
-  type: ToastType;
-  isExiting: boolean;
-}
-
-type View = 'home' | 'cabinet' | 'admin' | 'express' | 'fuel' | 'about' | 'locations';
+type View = 'home' | 'cabinet' | 'admin' | 'express' | 'fuel' | 'about';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [toast, setToast] = useState<ToastState | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const [loginForm, setLoginForm] = useState({ name: '', phone: '', password: '' });
 
-  const showToast = useCallback((message: string, type: ToastType = 'success') => {
-    setToast({ message, type, isExiting: false });
-    setTimeout(() => setToast(prev => prev ? { ...prev, isExiting: true } : null), 3500);
+  const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
   }, []);
 
@@ -65,20 +56,16 @@ const App: React.FC = () => {
     tgMessage += `👤 Mijoz: ${newOrder.userName}\n`;
     tgMessage += `📞 Tel: ${newOrder.phone}\n`;
     tgMessage += `🚗 Transport: ${newOrder.brand} ${newOrder.model}\n`;
-    tgMessage += `🛠 Xizmat turi: ${newOrder.serviceType}\n`;
-    if (newOrder.totalPrice) {
-      tgMessage += `💰 Jami narx: ${newOrder.totalPrice.toLocaleString()} UZS\n`;
-    }
-    if (newOrder.note) {
-      tgMessage += `📝 Izoh: ${newOrder.note}`;
-    }
+    tgMessage += `🛠 Xizmat: ${newOrder.serviceType}\n`;
+    if (newOrder.totalPrice) tgMessage += `💰 Narx: ${newOrder.totalPrice.toLocaleString()} UZS\n`;
+    if (newOrder.note) tgMessage += `📝 Izoh: ${newOrder.note}`;
 
     await sendTelegramNotification(tgMessage);
 
     const updated = [newOrder, ...orders];
     setOrders(updated);
     localStorage.setItem('million_km_orders', JSON.stringify(updated));
-    showToast("Buyurtma qabul qilindi");
+    showToast("Buyurtmangiz qabul qilindi!");
   };
 
   const handleLoginSubmit = () => {
@@ -87,12 +74,12 @@ const App: React.FC = () => {
       setCurrentUser(adminUser);
       localStorage.setItem('million_km_user', JSON.stringify(adminUser));
       setIsAuthModalOpen(false);
-      showToast("Xush kelibsiz, Admin");
+      showToast("Admin tizimiga xush kelibsiz");
       return;
     }
 
     if (!loginForm.name || !loginForm.phone) {
-      showToast("Ma'lumotlar to'liq emas", "error");
+      showToast("Ma'lumotlarni to'ldiring", "error");
       return;
     }
 
@@ -100,102 +87,85 @@ const App: React.FC = () => {
     setCurrentUser(user);
     localStorage.setItem('million_km_user', JSON.stringify(user));
     setIsAuthModalOpen(false);
-    showToast(`Salom, ${user.name}`);
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('million_km_user');
-    setCurrentView('home');
-    showToast("Tizimdan chiqdingiz");
+    showToast(`Xush kelibsiz, ${user.name}`);
   };
 
   const renderView = () => {
     switch (currentView) {
       case 'cabinet': return currentUser ? <Cabinet user={currentUser} showToast={showToast} onOrder={addOrder} /> : <Hero onStart={() => setIsAuthModalOpen(true)} />;
-      case 'admin': return currentUser?.isAdmin ? <Admin orders={orders} /> : <div className="p-20 text-center font-bold text-red-500">Ruxsat yo'q</div>;
+      case 'about': return <AboutUs />;
       case 'express':
       case 'fuel': return <MobileService type={currentView} user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />;
-      case 'about': return <AboutUs />;
       default: return (
-        <div className="space-y-32 pb-40">
+        <div className="space-y-24 md:space-y-32 pb-40">
           <Hero onStart={() => setIsAuthModalOpen(true)} />
-          <div id="brands" className="max-w-[1200px] mx-auto px-6"><BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} /></div>
-          <div id="benefits" className="max-w-[1200px] mx-auto px-6"><Benefits /></div>
-          <div id="status" className="max-w-[900px] mx-auto px-6"><StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} /></div>
-          <div id="quick-services-view" className="max-w-[1200px] mx-auto px-6"><QuickServices onSelect={setCurrentView} /></div>
-          <div id="locations" className="max-w-[1200px] mx-auto px-6"><NearestLocations /></div>
+          <div id="brands" className="max-w-7xl mx-auto px-6"><BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} /></div>
+          <div id="benefits" className="max-w-7xl mx-auto px-6"><Benefits /></div>
+          <div id="status" className="max-w-4xl mx-auto px-6"><StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} /></div>
+          <div id="quick-services" className="max-w-7xl mx-auto px-6"><QuickServices onSelect={setCurrentView} /></div>
+          <div id="locations" className="max-w-7xl mx-auto px-6"><NearestLocations /></div>
         </div>
       );
     }
   };
 
   return (
-    <div className="min-h-screen selection:bg-blue-100 flex flex-col">
-      <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={handleLogout} onLoginClick={() => setIsAuthModalOpen(true)} />
+    <div className="min-h-screen flex flex-col">
+      <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={() => { setCurrentUser(null); localStorage.removeItem('million_km_user'); showToast("Chiqdingiz"); }} onLoginClick={() => setIsAuthModalOpen(true)} />
       
       <main className="flex-grow">
         {renderView()}
       </main>
 
-      <footer className="py-20 border-t border-gray-100 bg-white/50 backdrop-blur-xl">
+      <AIConsultant />
+
+      {/* Dynamic Island Toast */}
+      {toast && (
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 z-[300] w-full max-w-sm px-4 pointer-events-none animate-dynamic-island">
+          <div className={`apple-glass p-5 rounded-[2.5rem] shadow-2xl flex items-center space-x-4 border border-white/40 ${toast.type === 'error' ? 'bg-red-50/80' : 'bg-white/80'}`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'}`}>
+              <i className={`fas ${toast.type === 'error' ? 'fa-times' : 'fa-check'} text-sm`}></i>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Tizim xabari</span>
+              <span className="font-bold text-sm">{toast.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Auth Modal */}
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/30 backdrop-blur-md">
+          <div className="bg-white/95 apple-glass squircle-lg p-10 w-full max-w-md shadow-2xl relative animate-spring">
+            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-8 right-8 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-8">Million KM</h2>
+            <div className="space-y-6">
+               <input type="text" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="Ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+               {loginForm.name.toLowerCase() === 'admin' ? (
+                 <input type="password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} placeholder="Pin" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-center tracking-[0.5em]" />
+               ) : (
+                 <input type="tel" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+               )}
+               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs tap-active">Davom etish</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="py-20 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="text-center md:text-left">
-            <h3 className="text-xl font-extrabold tracking-tighter">Million KM</h3>
-            <p className="text-sm text-gray-400 mt-2 font-medium italic">Premium avto servis xizmati</p>
+            <h3 className="text-xl font-black tracking-tighter">Million KM</h3>
+            <p className="text-xs text-gray-400 mt-2 font-bold uppercase tracking-widest">Premium Auto Service 2025</p>
           </div>
-          <div className="flex space-x-10 text-[13px] font-bold text-gray-500 uppercase tracking-widest">
-            <button onClick={() => setCurrentView('home')} className="hover:text-black">Bosh sahifa</button>
-            <button onClick={() => setCurrentView('about')} className="hover:text-black">Biz haqimizda</button>
-            <a href="tel:+998770200107" className="hover:text-black">Yordam</a>
+          <div className="flex space-x-10 text-[11px] font-black text-gray-400 uppercase tracking-widest">
+            <button onClick={() => setCurrentView('home')} className="hover:text-black">Asosiy</button>
+            <button onClick={() => setCurrentView('about')} className="hover:text-black">Haqimizda</button>
+            <a href="tel:+998770200107" className="hover:text-black">Aloqa</a>
           </div>
         </div>
       </footer>
-
-      <AIConsultant />
-
-      {toast && (
-        <div className={`fixed top-0 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none ${toast.isExiting ? 'animate-dynamic-exit opacity-0' : 'animate-dynamic-island'}`}>
-          <div className={`mt-4 p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl transition-all duration-700 ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-50/50 shadow-lg shadow-blue-500/20' : 'bg-white/20'}`}>
-              <i className={`fas ${toast.type === 'success' ? 'fa-check' : 'fa-exclamation-triangle'} text-lg`}></i>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1.5">
-                {toast.type === 'success' ? 'Tizim xabari' : 'Diqqat qiling'}
-              </span>
-              <span className="font-bold text-[15px] tracking-tight">{toast.message}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isAuthModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md animate-in">
-          <div className="bg-white/90 backdrop-blur-3xl squircle p-10 w-full max-w-md shadow-2xl relative border border-white/50 animate-spring">
-            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-10 right-10 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
-            <h2 className="text-3xl font-extrabold tracking-tight mb-10">Kirish</h2>
-            <div className="space-y-6">
-               <div className="space-y-2">
-                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Shaxsingiz</label>
-                 <input type="text" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="To'liq ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-               </div>
-               {loginForm.name.toLowerCase() !== 'admin' ? (
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bog'lanish</label>
-                    <input type="tel" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-                  </div>
-               ) : (
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Pin kod</label>
-                    <input type="password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} placeholder="••••" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-center tracking-[0.5em]" />
-                  </div>
-               )}
-               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active shadow-xl shadow-gray-200 mt-4">Davom etish</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
