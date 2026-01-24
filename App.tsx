@@ -56,9 +56,23 @@ const App: React.FC = () => {
       phone: orderData.phone || currentUser?.phone || '',
       note: orderData.note || '',
       timestamp: new Date().toLocaleString('uz-UZ'),
+      tariffType: orderData.tariffType,
+      servicesCount: orderData.servicesCount,
+      totalPrice: orderData.totalPrice
     };
 
-    const tgMessage = `🚀 <b>Yangi Buyurtma</b>\nMijoz: ${newOrder.userName}\nTel: ${newOrder.phone}\nXizmat: ${newOrder.serviceType}`;
+    let tgMessage = `🚀 <b>Yangi Buyurtma</b>\n`;
+    tgMessage += `👤 Mijoz: ${newOrder.userName}\n`;
+    tgMessage += `📞 Tel: ${newOrder.phone}\n`;
+    tgMessage += `🚗 Transport: ${newOrder.brand} ${newOrder.model}\n`;
+    tgMessage += `🛠 Xizmat turi: ${newOrder.serviceType}\n`;
+    if (newOrder.totalPrice) {
+      tgMessage += `💰 Jami narx: ${newOrder.totalPrice.toLocaleString()} UZS\n`;
+    }
+    if (newOrder.note) {
+      tgMessage += `📝 Izoh: ${newOrder.note}`;
+    }
+
     await sendTelegramNotification(tgMessage);
 
     const updated = [newOrder, ...orders];
@@ -143,7 +157,7 @@ const App: React.FC = () => {
       {toast && (
         <div className={`fixed top-0 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none ${toast.isExiting ? 'animate-dynamic-exit opacity-0' : 'animate-dynamic-island'}`}>
           <div className={`mt-4 p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl transition-all duration-700 ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-500 shadow-lg shadow-blue-500/20' : 'bg-white/20'}`}>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-50/50 shadow-lg shadow-blue-500/20' : 'bg-white/20'}`}>
               <i className={`fas ${toast.type === 'success' ? 'fa-check' : 'fa-exclamation-triangle'} text-lg`}></i>
             </div>
             <div className="flex flex-col">

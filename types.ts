@@ -9,7 +9,7 @@ export enum ServiceType {
 export interface CarModel {
   maxAge: number;
   maxKm: number;
-  priceOneTime?: number;
+  priceOneTime: number; // Endi bu majburiy
   desc: string;
 }
 
@@ -46,4 +46,7 @@ export interface Order {
   phone: string;
   note?: string;
   timestamp: string;
+  tariffType?: 'one-time' | 'yearly';
+  servicesCount?: number;
+  totalPrice?: number;
 }
