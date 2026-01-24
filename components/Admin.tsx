@@ -7,13 +7,10 @@ interface AdminProps {
 }
 
 const Admin: React.FC<AdminProps> = ({ orders }) => {
-  // Calculate real stats
   const uniqueClients = new Set(orders.map(o => o.phone)).size;
   const totalOrders = orders.length;
   
-  // Calculate today's orders
   const todayStr = new Date().toLocaleDateString('uz-UZ');
-  // Order timestamp is stored as toLocaleString('uz-UZ') in App.tsx, so it should contain the date part.
   const todayOrders = orders.filter(o => o.timestamp.includes(todayStr)).length;
 
   return (
@@ -21,11 +18,11 @@ const Admin: React.FC<AdminProps> = ({ orders }) => {
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
         <div>
           <div className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-3">Tizim Boshqaruvi</div>
-          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h1>
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Boshqaruvi</h1>
         </div>
         <div className="flex items-center bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm font-bold text-sm">
           <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse mr-3"></span>
-          Live Monitoring Active
+          Jonli monitoring faol
         </div>
       </div>
       
@@ -107,7 +104,7 @@ const Admin: React.FC<AdminProps> = ({ orders }) => {
            </div>
 
            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 card-shadow">
-              <h3 className="font-bold text-slate-900 mb-6 uppercase tracking-widest text-[10px]">Eksport</h3>
+              <h3 className="font-bold text-slate-900 mb-6 uppercase tracking-widest text-[10px]">Eksport qilish</h3>
               <div className="grid grid-cols-2 gap-4">
                  <button className="p-6 bg-slate-50 rounded-2xl hover:bg-blue-50 transition-all text-center">
                     <i className="fas fa-file-excel text-xl text-slate-300 mb-3 block"></i>

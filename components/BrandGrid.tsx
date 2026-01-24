@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CAR_DATA } from '../constants';
 import { User, Order } from '../types';
 
@@ -9,142 +9,91 @@ interface BrandGridProps {
   onOpenAuth: () => void;
 }
 
-// Using high-quality, stable URLs for the logos
 const BRAND_LOGOS: Record<string, string> = {
-  "chevrolet": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/800px-Chevrolet-logo.png",
-  "kia": "https://www.citypng.com/photo/26824/kia-black-logo-png",
-  "liauto": "https://1000logos.net/lixiang-logo/"
-};
-
-const BRAND_DESCS: Record<string, string> = {
-  "chevrolet": "Million km standartlariga mos eng so'nggi Chevrolet modellari",
-  "kia": "Million km standartlariga mos eng so'nggi Kia modellari",
-  "liauto": "Million km standartlariga mos eng so'nggi Li Auto modellari"
+  "chevrolet": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/1200px-Chevrolet-logo.png",
+  "kia": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Kia_logo.svg/2560px-Kia_logo.svg.png",
+  "liauto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Li_Auto_logo.png/1200px-Li_Auto_logo.png"
 };
 
 const BrandGrid: React.FC<BrandGridProps> = ({ user, onOrder, onOpenAuth }) => {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const modelsRef = useRef<HTMLDivElement>(null);
 
-  const brands = Object.keys(CAR_DATA);
-
   useEffect(() => {
     if (selectedBrand && modelsRef.current) {
       setTimeout(() => {
-        const offset = 100;
-        const bodyRect = document.body.getBoundingClientRect().top;
-        const elementRect = modelsRef.current?.getBoundingClientRect().top ?? 0;
-        const elementPosition = elementRect - bodyRect;
-        const offsetPosition = elementPosition - offset;
-        
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }, 200);
+        modelsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     }
   }, [selectedBrand]);
 
-  const handleOrder = (model: string, price: number) => {
-    if (!user) {
-      onOpenAuth();
-      return;
-    }
-    onOrder({
-      brand: selectedBrand || 'Unknown',
-      model: model,
-      serviceType: '1 Martalik Xizmat',
-      note: `Brend: ${selectedBrand}, Model: ${model}, Narxi: ${price.toLocaleString()} so'm`
-    });
-  };
-
   return (
-    <div className="py-20" id="brands">
-      <div className="text-center mb-16 px-4">
-        <h2 className="text-4xl md:text-6xl font-extrabold text-[#1d1d1f] mb-6 tracking-tight">Qo'llab-quvvatlanadigan brendlar</h2>
-        <p className="text-gray-500 text-xl font-medium">Eksklyuziv xizmat ko'rsatiladigan premium brendlar</p>
+    <div className="py-10">
+      <div className="mb-20">
+        <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-4">Brendlar</h2>
+        <p className="text-xl text-gray-500 font-medium">Faqat eng sara avtomobillar uchun.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-        {brands.map((brand) => (
+      <div className="grid md:grid-cols-3 gap-8">
+        {Object.keys(CAR_DATA).map((brand) => (
           <div 
             key={brand}
             onClick={() => setSelectedBrand(brand)}
-            className={`group relative overflow-hidden rounded-[2.5rem] bg-white border-2 transition-all duration-500 cursor-pointer p-10 flex flex-col items-center justify-center text-center ${selectedBrand === brand ? 'border-blue-600 scale-[1.03] shadow-2xl' : 'border-slate-100 shadow-xl hover:shadow-2xl'}`}
+            className={`ios-card bg-white/60 backdrop-blur-xl p-12 squircle border border-white/50 cursor-pointer flex flex-col items-center group ${selectedBrand === brand ? 'ring-4 ring-blue-500/20 shadow-2xl' : ''}`}
           >
-            <div className="h-28 w-full flex items-center justify-center mb-10">
+            <div className="h-28 w-full flex items-center justify-center mb-10 transition-transform duration-500 group-hover:scale-110">
               <img 
                 src={BRAND_LOGOS[brand]} 
-                alt={`${brand} logo`} 
-                className="max-h-full max-w-[90%] object-contain"
-                loading="lazy"
+                alt={brand} 
+                className="max-h-full object-contain transition-all duration-500" 
               />
             </div>
-            <div className="flex flex-col items-center">
-              <h3 className="text-2xl font-black capitalize mb-3 text-[#1d1d1f]">
-                {brand === 'liauto' ? 'Li Auto' : brand}
-              </h3>
-              <p className="text-sm text-gray-400 font-medium mb-8 max-w-[220px] leading-relaxed">{BRAND_DESCS[brand]}</p>
-              <div className={`px-8 py-3.5 rounded-2xl font-bold text-[11px] uppercase tracking-[0.1em] text-center border transition-all ${selectedBrand === brand ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100' : 'bg-transparent text-gray-500 border-gray-200 group-hover:border-blue-600 group-hover:text-blue-600'}`}>
-                Modellarni tanlash
-              </div>
-            </div>
+            <h3 className="text-2xl font-extrabold capitalize mb-8">{brand === 'liauto' ? 'Li Auto' : brand}</h3>
+            <button className="px-8 py-3 bg-gray-100 text-gray-900 text-[11px] font-bold uppercase tracking-widest rounded-full transition-all group-hover:bg-blue-600 group-hover:text-white">
+              Modellarni ko'rish
+            </button>
           </div>
         ))}
       </div>
 
       {selectedBrand && (
-        <div ref={modelsRef} className="mt-16 p-8 md:p-16 bg-[#1d1d1f] rounded-[3rem] text-white animate-in relative overflow-hidden shadow-2xl">
-          <div className="absolute -top-20 -right-20 w-80 h-80 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div ref={modelsRef} className="mt-20 p-12 md:p-20 bg-black squircle text-white animate-spring relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none"></div>
           
-          <div className="flex items-center justify-between mb-16 relative z-10">
+          <div className="flex justify-between items-center mb-20">
             <div>
-              <span className="text-blue-400 font-bold uppercase tracking-widest text-[10px] mb-3 block">Premium Tanlov</span>
-              <h3 className="text-3xl md:text-5xl font-extrabold capitalize tracking-tight">
-                {selectedBrand === 'liauto' ? 'Li Auto' : selectedBrand} Modellari
-              </h3>
+              <span className="text-blue-400 font-bold uppercase tracking-[0.2em] text-[10px] mb-3 block">Premium Tanlov</span>
+              <h3 className="text-4xl md:text-5xl font-extrabold tracking-tight capitalize">{selectedBrand === 'liauto' ? 'Li Auto' : selectedBrand} To'plami</h3>
             </div>
-            <button 
-              onClick={() => setSelectedBrand(null)} 
-              className="w-14 h-14 rounded-2xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all group active:scale-95"
-            >
-                <i className="fas fa-times text-xl group-hover:rotate-90 transition-transform"></i>
+            <button onClick={() => setSelectedBrand(null)} className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center tap-active hover:bg-white/20 transition-all">
+              <i className="fas fa-times"></i>
             </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Object.entries(CAR_DATA[selectedBrand]).map(([model, info]) => (
-              <div key={model} className="bg-white/5 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 flex flex-col h-full group hover:bg-white/10 transition-all border-b-4 border-b-transparent hover:border-b-blue-600 shadow-xl">
+              <div key={model} className="bg-white/5 p-10 squircle border border-white/10 flex flex-col hover:bg-white/10 transition-all ios-card">
                 <div className="flex justify-between items-start mb-8">
-                   <h4 className="text-2xl font-black tracking-tight">{model}</h4>
-                   <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center">
-                     <i className="fas fa-car text-blue-400 text-sm"></i>
-                   </div>
+                  <h4 className="text-2xl font-extrabold tracking-tight">{model}</h4>
+                  <span className="bg-blue-500/20 text-blue-400 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-wider">Yangi</span>
                 </div>
                 
-                <div className="space-y-4 mb-10 text-[13px] font-bold">
-                  <div className="flex justify-between items-center text-white/50">
-                    <span>Kafolat Limiti</span>
-                    <span className="text-white bg-white/10 px-3 py-1 rounded-lg">{info.maxKm.toLocaleString()} km</span>
-                  </div>
-                  <div className="flex justify-between items-center text-white/50">
-                    <span>Maksimal yosh</span>
-                    <span className="text-white bg-white/10 px-3 py-1 rounded-lg">{info.maxAge} yil</span>
-                  </div>
-                </div>
+                <p className="text-white/40 text-sm font-medium mb-12 italic">"{info.desc}"</p>
                 
-                <p className="text-white/40 text-sm mb-12 leading-relaxed flex-grow italic font-medium">"{info.desc}"</p>
-                
-                <div className="pt-8 border-t border-white/10 mt-auto flex flex-col sm:flex-row justify-between items-center gap-6">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold mb-1">Xizmat narxi</span>
-                      <div className="font-black text-2xl text-blue-400 tracking-tight">{info.priceOneTime?.toLocaleString()} <span className="text-xs">so'm</span></div>
-                    </div>
-                    <button 
-                      onClick={() => handleOrder(model, info.priceOneTime || 0)}
-                      className="w-full sm:w-auto px-8 py-4 bg-white text-black rounded-2xl font-black uppercase tracking-[0.1em] text-[10px] hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-2xl shadow-black/20"
-                    >
-                      Buyurtma
-                    </button>
+                <div className="mt-auto flex flex-col space-y-6 pt-8 border-t border-white/10">
+                  <div className="flex justify-between items-end">
+                    <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Xizmat narxi</span>
+                    <span className="text-2xl font-black text-blue-400">{info.priceOneTime?.toLocaleString()} <span className="text-xs">uzs</span></span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      if(!user) return onOpenAuth();
+                      onOrder({ brand: selectedBrand, model, serviceType: 'Premium xizmat' });
+                    }}
+                    className="w-full py-4 bg-white text-black rounded-[18px] font-bold text-[13px] uppercase tracking-widest tap-active hover:bg-blue-500 hover:text-white"
+                  >
+                    Xizmatni so'rash
+                  </button>
                 </div>
               </div>
             ))}

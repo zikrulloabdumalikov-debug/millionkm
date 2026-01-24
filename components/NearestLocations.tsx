@@ -61,7 +61,7 @@ const NearestLocations: React.FC = () => {
             <i className="fas fa-phone-volume"></i>
           </div>
           <h4 className="font-black text-xl text-slate-900 tracking-tight mb-2">Markaziy aloqa</h4>
-          <p className="text-gray-400 font-bold text-lg">+998 71 123 45 67</p>
+          <p className="text-gray-400 font-bold text-lg">+998 77 020 01 07</p>
           <div className="mt-4 flex space-x-3">
              <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all cursor-pointer"><i className="fab fa-telegram-plane"></i></div>
              <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all cursor-pointer"><i className="fab fa-instagram"></i></div>

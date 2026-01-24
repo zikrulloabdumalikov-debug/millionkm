@@ -7,43 +7,42 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onStart }) => {
   return (
-    <div className="relative pt-32 pb-20 md:pt-48 md:pb-40 overflow-hidden hero-gradient">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <div className="relative pt-44 pb-32 md:pt-60 md:pb-48 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-8 relative z-10">
         <div className="flex flex-col items-center text-center">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-blue-50/50 border border-blue-100/30 mb-10 animate-fade-up">
-            <span className="text-[10px] font-extrabold text-blue-600 tracking-[0.2em] uppercase">Premium Automotive Intelligence</span>
+          <div className="inline-flex items-center px-5 py-2 rounded-full bg-white/40 border border-white/50 backdrop-blur-md mb-12 animate-spring">
+            <span className="text-[11px] font-bold text-blue-600 tracking-[0.15em] uppercase">2025 Texnologiyasi</span>
           </div>
           
-          <h1 className="text-5xl md:text-[92px] font-extrabold tracking-tight text-[#1d1d1f] mb-8 leading-[1.0] animate-fade-up">
+          <h1 className="text-[64px] md:text-[112px] font-[850] tracking-[-0.06em] leading-[0.95] text-[#1D1D1F] mb-10 animate-spring" style={{ animationDelay: '0.1s' }}>
             Million KM
           </h1>
           
-          <div className="text-xl md:text-3xl font-medium text-gray-500 max-w-3xl mx-auto mb-14 leading-relaxed animate-fade-up delay-100">
-            Ko'pchilik dvigatelni ta'mirlaydi. <br />
-            <span className="text-[#1d1d1f] font-bold">Biz esa uni saqlab qolamiz.</span>
+          <div className="p-8 md:p-12 mb-16 animate-spring" style={{ animationDelay: '0.2s' }}>
+            <p className="text-2xl md:text-4xl font-medium text-[#86868B] max-w-[800px] leading-tight">
+              Ko‘pchilik dvigatelni ta’mirlaydi. <br />
+              <span className="text-black font-extrabold">Biz esa uni saqlab qolamiz.</span>
+            </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-5 animate-fade-up delay-200">
+          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 animate-spring" style={{ animationDelay: '0.3s' }}>
             <button 
               onClick={onStart}
-              className="w-full sm:w-auto px-12 py-5 bg-black text-white rounded-full font-bold text-lg hover:opacity-90 transition-all active:scale-95 shadow-2xl shadow-gray-200"
+              className="w-full sm:w-auto px-16 py-5 bg-black text-white rounded-[22px] font-bold text-lg tap-active shadow-2xl shadow-gray-200 transition-all hover:bg-[#333]"
             >
-              Hozir boshlash
+              Boshlash
             </button>
             <button 
-              onClick={() => {
-                const el = document.getElementById('status');
-                if (el) {
-                  window.scrollTo({ top: el.offsetTop - 100, behavior: 'smooth' });
-                }
-              }}
-              className="w-full sm:w-auto px-12 py-5 bg-white text-black rounded-full font-bold text-lg border border-gray-200 hover:bg-gray-50 transition-all flex items-center justify-center"
+              onClick={() => document.getElementById('status')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              className="w-full sm:w-auto px-16 py-5 bg-white text-black rounded-[22px] font-bold text-lg border border-gray-100 tap-active hover:bg-gray-50 transition-all"
             >
               Statusni tekshirish
             </button>
           </div>
         </div>
       </div>
+      
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-blue-50/40 to-transparent pointer-events-none -z-10"></div>
     </div>
   );
 };

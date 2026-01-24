@@ -24,6 +24,13 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newCar, setNewCar] = useState({ brand: '', model: '', year: '', lastOil: '', daily: '' });
+  const [displayLastOil, setDisplayLastOil] = useState('');
+  const [displayDaily, setDisplayDaily] = useState('');
+
+  const formatWithSpaces = (val: string) => {
+    const raw = val.replace(/\D/g, '');
+    return raw.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
 
   const addCar = () => {
     if (!newCar.brand || !newCar.model || !newCar.year || !newCar.lastOil) {
@@ -43,6 +50,8 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
     setCars([...cars, car]);
     setIsAddOpen(false);
     setNewCar({ brand: '', model: '', year: '', lastOil: '', daily: '' });
+    setDisplayLastOil('');
+    setDisplayDaily('');
     showToast("Mashina garajga qo'shildi!", 'success');
   };
 
@@ -50,7 +59,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
     onOrder({
       brand: car.brand,
       model: car.model,
-      serviceType: 'Garage Service Request',
+      serviceType: 'Garajdan xizmat so\'rovi',
       note: `Garajdan so'rov: ${car.lastOilKm} km da oxirgi moy almashtirilgan.`
     });
   };
@@ -78,7 +87,6 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
         {cars.map(car => {
           const serviceInterval = 8000;
           const nextServiceKm = car.lastOilKm + serviceInterval;
-          // Simulated current progress
           const drivenSinceLast = 2100; 
           const remainingKm = serviceInterval - drivenSinceLast;
           const progress = (drivenSinceLast / serviceInterval) * 100;
@@ -98,7 +106,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
                     </div>
                   </div>
                   <div className="px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-green-100">
-                    Safe Drive
+                    Xavfsiz haydash
                   </div>
                 </div>
 
@@ -107,7 +115,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
                     <div className="flex justify-between items-end mb-4">
                       <div className="space-y-1">
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Keyingi servisgacha</span>
-                        <span className="text-3xl font-black text-slate-900 tracking-tight">{remainingKm.toLocaleString()} KM</span>
+                        <span className="text-3xl font-black text-slate-900 tracking-tight">{remainingKm.toLocaleString().replace(/,/g, ' ')} KM</span>
                       </div>
                       <span className="text-blue-600 font-bold text-sm uppercase tracking-widest">~{daysToService} kun</span>
                     </div>
@@ -122,7 +130,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-slate-50/50 p-6 rounded-[1.5rem] border border-slate-50">
                       <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2 text-center">Xizmat chegarasi</div>
-                      <div className="text-lg font-extrabold text-slate-900 text-center">{nextServiceKm.toLocaleString()} km</div>
+                      <div className="text-lg font-extrabold text-slate-900 text-center">{nextServiceKm.toLocaleString().replace(/,/g, ' ')} km</div>
                     </div>
                     <div className="bg-slate-50/50 p-6 rounded-[1.5rem] border border-slate-50">
                       <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2 text-center">Kunlik yurish</div>
@@ -179,19 +187,27 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
                     onChange={e => setNewCar({...newCar, year: e.target.value})}
                   />
                   <input 
-                    type="number"
+                    type="text"
                     className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-100 font-semibold text-slate-900 transition-all outline-none" 
-                    placeholder="Moy km" 
-                    value={newCar.lastOil}
-                    onChange={e => setNewCar({...newCar, lastOil: e.target.value})}
+                    placeholder="Moy km (masalan: 40 000)" 
+                    value={displayLastOil}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/\D/g, '');
+                      setNewCar({...newCar, lastOil: raw});
+                      setDisplayLastOil(formatWithSpaces(raw));
+                    }}
                   />
                 </div>
                 <input 
-                  type="number"
+                  type="text"
                   className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-100 font-semibold text-slate-900 transition-all outline-none" 
                   placeholder="Kunlik yurish (km)" 
-                  value={newCar.daily}
-                  onChange={e => setNewCar({...newCar, daily: e.target.value})}
+                  value={displayDaily}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '');
+                    setNewCar({...newCar, daily: raw});
+                    setDisplayDaily(formatWithSpaces(raw));
+                  }}
                 />
                 <button 
                   onClick={addCar}
