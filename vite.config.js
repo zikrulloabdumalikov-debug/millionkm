@@ -4,18 +4,9 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: './', // GitHub Pages uchun kerak
   build: {
     outDir: 'dist',
-    emptyOutDir: true,
-    assetsDir: 'assets',
-    minify: 'esbuild',
-    rollupOptions: {
-      output: {
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
-      }
-    }
+    emptyOutDir: true
   }
 });
