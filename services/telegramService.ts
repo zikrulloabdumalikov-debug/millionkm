@@ -21,12 +21,27 @@ export const sendTelegramNotification = async (message: string) => {
   }
 };
 
-export const sendChatLogToTelegram = async (userModel: string, userProblem: string, aiAdvice: string) => {
+export const sendLeadToTelegram = async (data: {
+  name: string;
+  phone: string;
+  carPlate: string;
+  mileage: string;
+  problem: string;
+  model: string;
+}) => {
   const message = `
-<b>💬 Million KM AI Support</b>
-<b>Mashina:</b> ${userModel}
-<b>Muammo:</b> ${userProblem}
-<b>AI Maslahati:</b> ${aiAdvice}
+<b>🚨 YANGI AI MUROJAAT (LEAD)</b>
+
+<b>👤 Mijoz:</b> ${data.name}
+<b>📞 Tel:</b> ${data.phone}
+<b>🚗 Avto:</b> ${data.model}
+<b>🔢 Davlat raqami:</b> <code>${data.carPlate}</code>
+<b>📊 Probeg:</b> ${data.mileage} KM
+<b>🛠 Muammo tavsifi:</b> 
+<i>"${data.problem}"</i>
+
+------------------------------
+Xabar AI mexanik orqali qabul qilindi.
   `;
   return await sendTelegramNotification(message);
 };

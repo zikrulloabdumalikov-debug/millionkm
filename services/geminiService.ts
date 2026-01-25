@@ -1,22 +1,29 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
-
 export const getCarAdvice = async (carModel: string, problem: string): Promise<string> => {
   try {
+    // API Key process.env.API_KEY orqali avtomatik olinadi
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+    
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Siz professional avtomobil ustasisiz (Million KM servisidan). Mijozning mashinasi: ${carModel}. Muammo: ${problem}. Mijozga qisqa, tushunarli va foydali maslahat bering (o'zbek tilida).`,
+      contents: `Mijozning mashinasi: ${carModel}. Muammo: ${problem}.`,
       config: {
-        temperature: 0.7,
+        systemInstruction: `Siz "Million KM" premium avtoservisining tajribali va xushmuomala bosh mexanigisiz. 
+        Vazifangiz:
+        1. Mijozning muammosini professional tahlil qiling va o'zbek tilida qisqa, tushunarli maslahat bering.
+        2. Dvigatelni saqlab qolishning muhimligini ta'kidlang.
+        3. Maslahat oxirida mijozga yordam berish uchun servisga taklif qiling.
+        4. Javobingiz samimiy va ishonchli bo'lsin.`,
+        temperature: 0.8,
         topP: 0.95,
-        maxOutputTokens: 250,
-      }
+      },
     });
-    return response.text || "Kechirasiz, hozircha maslahat bera olmayman.";
+    
+    return response.text || "Kechirasiz, texnik muammo yuz berdi. Iltimos, mutaxassis bilan bog'laning: +998 77 020 01 07";
   } catch (error) {
-    console.error("Gemini Error:", error);
-    return "Texnik nosozlik yuz berdi. Iltimos, keyinroq urinib ko'ring.";
+    console.error("Gemini AI Error:", error);
+    return "Hozirda AI xizmati band. Iltimos, birozdan so'ng qayta urinib ko'ring yoki servisga qo'ng'iroq qiling.";
   }
 };
