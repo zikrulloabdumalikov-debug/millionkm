@@ -1,213 +1,197 @@
 
-import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
-import { CAR_DATA, ONE_TIME_SERVICES, YEARLY_BENEFITS } from './constants';
+import React, { useState, useEffect, useCallback } from 'react';
+import { User, Order } from './types';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import StatusChecker from './components/StatusChecker';
+import BrandGrid from './components/BrandGrid';
+import Cabinet from './components/Cabinet';
+import Admin from './components/Admin';
+import MobileService from './components/MobileService';
+import AIConsultant from './components/AIConsultant';
+import AboutUs from './components/AboutUs';
+import NearestLocations from './components/NearestLocations';
+import Benefits from './components/Benefits';
+import QuickServices from './components/QuickServices';
+import { sendTelegramNotification } from './services/telegramService';
 
-// --- Global Services ---
-const TG_TOKEN = "7722483735:AAG_LZ1Bg0H-mnqAlnw4OknNj-BTrqM8CWM";
-const TG_CHAT_ID = "-1003461463026";
+type ToastType = 'success' | 'error';
+interface ToastState {
+  message: string;
+  type: ToastType;
+  isExiting: boolean;
+}
 
-const notifyTelegram = async (msg: string) => {
-  try {
-    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'HTML' })
-    });
-  } catch (e) { console.error("Telegram Error:", e); }
-};
+type View = 'home' | 'cabinet' | 'admin' | 'express' | 'fuel' | 'about' | 'locations';
 
-const getAIResponse = async (prompt: string) => {
-  try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt
-    });
-    return response.text;
-  } catch (e) {
-    console.error("AI Error:", e);
-    return "Kechirasiz, mexanik AI hozircha javob bera olmaydi.";
-  }
-};
+const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<View>('home');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [toast, setToast] = useState<ToastState | null>(null);
 
-// --- View Components ---
-const HomeView = ({ onStart, onCheck }: any) => (
-  <div className="space-y-32 animate-spring">
-    {/* Hero Section */}
-    <section className="text-center py-20 px-4">
-      <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-10">
-        Million KM Premium Experience
-      </div>
-      <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] text-slate-900 mb-10">
-        Dvigatelingizni <br /> <span className="text-blue-600">Million KM</span> ga <br /> tayyorlang.
-      </h1>
-      <p className="max-w-2xl mx-auto text-gray-400 text-lg font-medium leading-relaxed mb-12">
-        Ko‘pchilik dvigatelni ta’mirlaydi. Biz esa uni saqlab qolamiz. <br /> Professional moy almashtirish va 1,000,000 km kafolati.
-      </p>
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <button onClick={onStart} className="px-12 h-16 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl tap-active">Brendni Tanlash</button>
-        <button onClick={onCheck} className="px-12 h-16 bg-white border border-gray-100 rounded-2xl font-black uppercase tracking-widest text-xs tap-active">Statusni Tekshirish</button>
-      </div>
-    </section>
+  const [loginForm, setLoginForm] = useState({ name: '', phone: '', password: '' });
 
-    {/* Brand Grid */}
-    <section id="brands" className="grid md:grid-cols-3 gap-8 pb-32">
-      {Object.keys(CAR_DATA).map(brand => (
-        <div key={brand} className="apple-glass p-12 squircle hover:border-blue-500 transition-all cursor-pointer group">
-          <h3 className="text-3xl font-black uppercase tracking-tighter mb-4 text-slate-900">{brand}</h3>
-          <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-10 italic">Premium original servislar</p>
-          <div className="space-y-3">
-             <button className="w-full py-5 bg-gray-50 rounded-xl font-black text-[10px] uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-all">Modellarni ko'rish</button>
-          </div>
-        </div>
-      ))}
-    </section>
-  </div>
-);
-
-const App = () => {
-  const [view, setView] = useState('home');
-  const [user, setUser] = useState<any>(null);
-  const [showAuth, setShowAuth] = useState(false);
-  const [loginForm, setLoginForm] = useState({ name: '', phone: '' });
-  const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('mkm_user_session');
-    if (saved) setUser(JSON.parse(saved));
+  const showToast = useCallback((message: string, type: ToastType = 'success') => {
+    setToast({ message, type, isExiting: false });
+    setTimeout(() => setToast(prev => prev ? { ...prev, isExiting: true } : null), 3500);
+    setTimeout(() => setToast(null), 4000);
   }, []);
 
-  const showMsg = (m: string) => {
-    setToast(m);
-    setTimeout(() => setToast(null), 3000);
+  useEffect(() => {
+    const savedUser = localStorage.getItem('million_km_user');
+    const savedOrders = localStorage.getItem('million_km_orders');
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    if (savedOrders) setOrders(JSON.parse(savedOrders));
+  }, []);
+
+  const addOrder = async (orderData: Partial<Order>) => {
+    const newOrder: Order = {
+      id: Math.random().toString(36).substr(2, 9),
+      userName: orderData.userName || currentUser?.name || 'Mehmon',
+      brand: orderData.brand || 'Nomaʼlum',
+      model: orderData.model || 'Nomaʼlum',
+      serviceType: orderData.serviceType || 'Xizmat',
+      phone: orderData.phone || currentUser?.phone || '',
+      note: orderData.note || '',
+      timestamp: new Date().toLocaleString('uz-UZ'),
+      tariffType: orderData.tariffType,
+      servicesCount: orderData.servicesCount,
+      totalPrice: orderData.totalPrice
+    };
+
+    let tgMessage = `🚀 <b>Yangi Buyurtma</b>\n`;
+    tgMessage += `👤 Mijoz: ${newOrder.userName}\n`;
+    tgMessage += `📞 Tel: ${newOrder.phone}\n`;
+    tgMessage += `🚗 Transport: ${newOrder.brand} ${newOrder.model}\n`;
+    tgMessage += `🛠 Xizmat turi: ${newOrder.serviceType}\n`;
+    if (newOrder.totalPrice) {
+      tgMessage += `💰 Jami narx: ${newOrder.totalPrice.toLocaleString()} UZS\n`;
+    }
+    if (newOrder.note) {
+      tgMessage += `📝 Izoh: ${newOrder.note}`;
+    }
+
+    await sendTelegramNotification(tgMessage);
+
+    const updated = [newOrder, ...orders];
+    setOrders(updated);
+    localStorage.setItem('million_km_orders', JSON.stringify(updated));
+    showToast("Buyurtma qabul qilindi");
   };
 
-  const handleAuth = () => {
-    if (!loginForm.name || !loginForm.phone) return showMsg("Ma'lumotlarni to'ldiring");
-    const u = { name: loginForm.name, phone: loginForm.phone, uid: Date.now().toString() };
-    setUser(u);
-    localStorage.setItem('mkm_user_session', JSON.stringify(u));
-    setShowAuth(false);
-    showMsg(`Xush kelibsiz, ${u.name}`);
+  const handleLoginSubmit = () => {
+    if (loginForm.name.toLowerCase() === 'admin' && loginForm.password === '123') {
+      const adminUser: User = { uid: 'a1', name: 'Admin', email: '', phone: '', gender: '', isAdmin: true };
+      setCurrentUser(adminUser);
+      localStorage.setItem('million_km_user', JSON.stringify(adminUser));
+      setIsAuthModalOpen(false);
+      showToast("Xush kelibsiz, Admin");
+      return;
+    }
+
+    if (!loginForm.name || !loginForm.phone) {
+      showToast("Ma'lumotlar to'liq emas", "error");
+      return;
+    }
+
+    const user: User = { uid: 'u-' + Date.now(), name: loginForm.name, email: '', phone: loginForm.phone, gender: '', isAdmin: false };
+    setCurrentUser(user);
+    localStorage.setItem('million_km_user', JSON.stringify(user));
+    setIsAuthModalOpen(false);
+    showToast(`Salom, ${user.name}`);
   };
 
   const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('mkm_user_session');
-    setView('home');
+    setCurrentUser(null);
+    localStorage.removeItem('million_km_user');
+    setCurrentView('home');
+    showToast("Tizimdan chiqdingiz");
+  };
+
+  const renderView = () => {
+    switch (currentView) {
+      case 'cabinet': return currentUser ? <Cabinet user={currentUser} showToast={showToast} onOrder={addOrder} /> : <Hero onStart={() => setIsAuthModalOpen(true)} />;
+      case 'admin': return currentUser?.isAdmin ? <Admin orders={orders} /> : <div className="p-20 text-center font-bold text-red-500">Ruxsat yo'q</div>;
+      case 'express':
+      case 'fuel': return <MobileService type={currentView} user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />;
+      case 'about': return <AboutUs />;
+      default: return (
+        <div className="space-y-32 pb-40">
+          <Hero onStart={() => setIsAuthModalOpen(true)} />
+          <div id="brands" className="max-w-[1200px] mx-auto px-6"><BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} /></div>
+          <div id="benefits" className="max-w-[1200px] mx-auto px-6"><Benefits /></div>
+          <div id="status" className="max-w-[900px] mx-auto px-6"><StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} /></div>
+          <div id="quick-services-view" className="max-w-[1200px] mx-auto px-6"><QuickServices onSelect={setCurrentView} /></div>
+          <div id="locations" className="max-w-[1200px] mx-auto px-6"><NearestLocations /></div>
+        </div>
+      );
+    }
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-[100] p-6">
-        <div className="max-w-7xl mx-auto h-16 apple-glass squircle px-8 flex items-center justify-between shadow-2xl shadow-black/5">
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setView('home')}>
-            <div className="w-9 h-9 bg-black rounded-xl flex items-center justify-center">
-              <i className="fas fa-road text-white text-sm"></i>
-            </div>
-            <span className="font-black tracking-tighter text-xl">Million KM</span>
-          </div>
-          <div className="hidden md:flex items-center space-x-8 text-[10px] font-black uppercase tracking-widest text-gray-400">
-            <button onClick={() => setView('home')} className={`hover:text-black transition-colors ${view === 'home' ? 'text-black' : ''}`}>Asosiy</button>
-            <button onClick={() => setView('about')} className={`hover:text-black transition-colors ${view === 'about' ? 'text-black' : ''}`}>Haqimizda</button>
-          </div>
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <button onClick={() => setView('cabinet')} className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center tap-active">
-                  <i className="fas fa-user-circle text-lg"></i>
-                </button>
-                <button onClick={handleLogout} className="w-10 h-10 rounded-full bg-red-50 text-red-400 flex items-center justify-center tap-active">
-                  <i className="fas fa-power-off text-xs"></i>
-                </button>
-              </div>
-            ) : (
-              <button onClick={() => setShowAuth(true)} className="bg-black text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest tap-active">Kirish</button>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
-        {view === 'home' && <HomeView onStart={() => setView('home')} onCheck={() => setView('home')} />}
-        
-        {view === 'about' && (
-          <div className="py-20 animate-spring max-w-4xl mx-auto text-center space-y-12">
-             <h2 className="text-5xl font-black tracking-tighter uppercase text-slate-900">Biz Haqimizda</h2>
-             <p className="text-gray-500 text-xl font-medium leading-relaxed">
-               Million KM — bu O'zbekistondagi birinchi professional mobil servis tarmog'i. 
-               Bizning maqsadimiz har bir avtomobilning motor umrini 1,000,000 kilometrgacha uzaytirishdir.
-             </p>
-             <div className="grid md:grid-cols-3 gap-6">
-                <div className="p-8 apple-glass squircle border border-gray-100">
-                   <div className="text-3xl font-black text-blue-600 mb-2">10k+</div>
-                   <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Baxtli Mijoz</div>
-                </div>
-                <div className="p-8 apple-glass squircle border border-gray-100">
-                   <div className="text-3xl font-black text-slate-900 mb-2">24/7</div>
-                   <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Mobil Yordam</div>
-                </div>
-                <div className="p-8 apple-glass squircle border border-gray-100">
-                   <div className="text-3xl font-black text-green-600 mb-2">Original</div>
-                   <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Mahsulotlar</div>
-                </div>
-             </div>
-             <button onClick={() => setView('home')} className="px-10 py-4 bg-black text-white rounded-xl font-black uppercase text-[10px] tracking-widest">Asosiyga qaytish</button>
-          </div>
-        )}
-
-        {view === 'cabinet' && user && (
-          <div className="py-20 animate-spring space-y-12">
-             <div className="apple-glass p-12 squircle-lg shadow-xl flex flex-col md:flex-row justify-between items-center gap-8">
-                <div className="text-center md:text-left">
-                   <h2 className="text-4xl font-black tracking-tighter mb-2">Salom, {user.name}!</h2>
-                   <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Shaxsiy Garajingiz</p>
-                </div>
-                <button className="px-10 h-16 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-blue-200">Yangi Mashina Qo'shish</button>
-             </div>
-             <div className="grid md:grid-cols-2 gap-8">
-                <div className="apple-glass p-10 squircle border border-blue-100 bg-blue-50/20">
-                   <div className="flex items-center space-x-4 mb-8">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                        <i className="fas fa-car-side text-blue-600"></i>
-                      </div>
-                      <span className="font-black text-xl text-slate-800">Mening Avtomobillarim</span>
-                   </div>
-                   <p className="text-gray-400 font-medium italic">Hozircha mashinalar qo'shilmagan.</p>
-                </div>
-             </div>
-          </div>
-        )}
+    <div className="min-h-screen selection:bg-blue-100 flex flex-col">
+      <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={handleLogout} onLoginClick={() => setIsAuthModalOpen(true)} />
+      
+      <main className="flex-grow">
+        {renderView()}
       </main>
 
-      {/* AI Bot */}
-      <div className="fixed bottom-10 right-10 z-[110]">
-        <button className="w-16 h-16 bg-black text-white rounded-2xl shadow-2xl flex items-center justify-center tap-active group">
-          <i className="fas fa-robot text-xl"></i>
-          <span className="absolute right-20 bg-black text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">AI Mexanik</span>
-        </button>
-      </div>
+      <footer className="py-20 border-t border-gray-100 bg-white/50 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-10">
+          <div className="text-center md:text-left">
+            <h3 className="text-xl font-extrabold tracking-tighter">Million KM</h3>
+            <p className="text-sm text-gray-400 mt-2 font-medium italic">Premium avto servis xizmati</p>
+          </div>
+          <div className="flex space-x-10 text-[13px] font-bold text-gray-500 uppercase tracking-widest">
+            <button onClick={() => setCurrentView('home')} className="hover:text-black">Bosh sahifa</button>
+            <button onClick={() => setCurrentView('about')} className="hover:text-black">Biz haqimizda</button>
+            <a href="tel:+998770200107" className="hover:text-black">Yordam</a>
+          </div>
+        </div>
+      </footer>
 
-      {/* Toast */}
+      <AIConsultant />
+
       {toast && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] apple-glass px-8 py-4 squircle shadow-2xl border-l-4 border-l-blue-600 animate-spring">
-          <span className="font-bold text-sm">{toast}</span>
+        <div className={`fixed top-0 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none ${toast.isExiting ? 'animate-dynamic-exit opacity-0' : 'animate-dynamic-island'}`}>
+          <div className={`mt-4 p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl transition-all duration-700 ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-50/50 shadow-lg shadow-blue-500/20' : 'bg-white/20'}`}>
+              <i className={`fas ${toast.type === 'success' ? 'fa-check' : 'fa-exclamation-triangle'} text-lg`}></i>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1.5">
+                {toast.type === 'success' ? 'Tizim xabari' : 'Diqqat qiling'}
+              </span>
+              <span className="font-bold text-[15px] tracking-tight">{toast.message}</span>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Auth Modal */}
-      {showAuth && (
-        <div className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-md flex items-center justify-center p-6">
-          <div className="bg-white apple-glass p-12 squircle-lg w-full max-w-md shadow-2xl animate-spring">
-            <h2 className="text-4xl font-black tracking-tighter mb-10">Tizimga Kirish</h2>
-            <div className="space-y-4">
-              <input value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="Ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-50 border-none outline-none font-bold" />
-              <input value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-50 border-none outline-none font-bold" />
-              <button onClick={handleAuth} className="w-full h-16 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs tap-active mt-4">Kirish</button>
-              <button onClick={() => setShowAuth(false)} className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-gray-400">Yopish</button>
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md animate-in">
+          <div className="bg-white/90 backdrop-blur-3xl squircle p-10 w-full max-w-md shadow-2xl relative border border-white/50 animate-spring">
+            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-10 right-10 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-10">Kirish</h2>
+            <div className="space-y-6">
+               <div className="space-y-2">
+                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Shaxsingiz</label>
+                 <input type="text" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="To'liq ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+               </div>
+               {loginForm.name.toLowerCase() !== 'admin' ? (
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bog'lanish</label>
+                    <input type="tel" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+                  </div>
+               ) : (
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Pin kod</label>
+                    <input type="password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} placeholder="••••" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-center tracking-[0.5em]" />
+                  </div>
+               )}
+               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active shadow-xl shadow-gray-200 mt-4">Davom etish</button>
             </div>
           </div>
         </div>
