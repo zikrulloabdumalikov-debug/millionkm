@@ -11,44 +11,49 @@
   <style>
     :root {
       --bg: #FBFBFF;
-      --card: rgba(255, 255, 255, 0.72);
+      --card: rgba(255, 255, 255, 0.8);
       --accent: #007AFF;
     }
     body { 
       font-family: 'Plus Jakarta Sans', sans-serif; 
       background-color: var(--bg);
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      color: #1d1d1f;
     }
     .apple-glass {
       background: var(--card);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
     .squircle { border-radius: 32px; }
     .squircle-lg { border-radius: 48px; }
     @keyframes springIn {
-      0% { transform: scale(0.9) translateY(30px); opacity: 0; filter: blur(10px); }
-      100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+      0% { transform: scale(0.95) translateY(20px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
     }
-    .animate-spring { animation: springIn 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+    .animate-spring { animation: springIn 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
     .tap-active:active { transform: scale(0.96); transition: transform 0.1s; }
+    
+    /* Custom scrollbar for premium feel */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e2e2e7; border-radius: 10px; border: 2px solid var(--bg); }
   </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
   }
 }
 </script>
 </head>
 <body>
   <div id="root"></div>
-  <script type="module" src="./index.tsx"></script>
+  <!-- Platforma avtomatik ravishda TSX ni JS ga o'giradi, shuning uchun to'g'ridan-to'g'ri import qilamiz -->
+  <script type="module" src="index.tsx"></script>
 </body>
 </html>
