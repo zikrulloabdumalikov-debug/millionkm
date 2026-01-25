@@ -92,54 +92,41 @@ window.Navbar = ({ currentView, setView, user, onLogout, onLoginClick }) => {
   );
 };
 
-// Hero Section (Fixed Sizes - Not Gigantic)
+// Hero Section (Clean Text Only, No Image)
 window.Hero = ({ onStart }) => {
   return (
-    <div className="relative pt-32 pb-16 md:pt-44 md:pb-28 px-6 overflow-hidden bg-[#F5F5F7]">
+    <div className="relative pt-40 pb-32 px-6 overflow-hidden bg-[#F5F5F7] flex items-center justify-center min-h-[60vh]">
       <div className="max-w-[960px] mx-auto text-center relative z-10">
         
         <div className="animate-fade-up">
-           <div className="inline-flex items-center px-3 py-1 rounded-full bg-white border border-[#E5E5EA] mb-6 shadow-sm">
+           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white border border-[#E5E5EA] mb-8 shadow-sm">
              <span className="w-1.5 h-1.5 bg-[#0071E3] rounded-full mr-2 animate-pulse"></span>
-             <span className="text-[10px] font-bold text-[#1D1D1F] uppercase tracking-wide">2025 Premium Standart</span>
+             <span className="text-[11px] font-bold text-[#1D1D1F] uppercase tracking-wide">2026 Premium Standart</span>
            </div>
 
-           <h1 className="text-4xl md:text-6xl font-bold text-[#1D1D1F] tracking-tight mb-6 leading-[1.1] text-hero">
+           <h1 className="text-5xl md:text-7xl font-bold text-[#1D1D1F] tracking-tight mb-8 leading-[1.05] text-hero">
              Dvigatelni ta’mirlamang. <br/>
              <span className="text-[#0071E3]">Uni saqlab qoling.</span>
            </h1>
            
-           <p className="text-[#86868B] text-base md:text-xl max-w-2xl mx-auto font-medium leading-relaxed mb-8">
+           <p className="text-[#86868B] text-lg md:text-2xl max-w-2xl mx-auto font-medium leading-relaxed mb-12">
              1,000,000 km kafolat va professional muhandislar nazorati. 
-             Sizning avtomobilingiz eng yaxshisiga loyiq.
+             Eng yaxshisiga loyiqsiz.
            </p>
 
-           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-             <button onClick={onStart} className="apple-btn-primary w-full sm:w-auto px-8">Hozir boshlash</button>
+           <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+             <button onClick={onStart} className="apple-btn-primary px-10 py-4 text-base shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto">
+                Hozir boshlash
+             </button>
              <button 
                onClick={() => {
                   const el = document.getElementById('status');
                   if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                }}
-               className="apple-btn-secondary w-full sm:w-auto px-8"
+               className="apple-btn-secondary px-10 py-4 text-base w-full sm:w-auto bg-white hover:bg-gray-50 border border-gray-200"
              >
                Statusni tekshirish
              </button>
-           </div>
-        </div>
-
-        <div className="mt-16 animate-fade-up" style={{animationDelay: '0.2s'}}>
-           <div className="relative rounded-[24px] md:rounded-[32px] overflow-hidden shadow-2xl mx-auto max-w-5xl aspect-[16/9] md:aspect-[21/9] border border-white/50 bg-white">
-              <img 
-                src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1600&auto=format&fit=crop" 
-                alt="Premium Service" 
-                className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-[2s]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-white text-left">
-                <div className="font-bold text-lg md:text-xl">Million KM Service</div>
-                <div className="text-white/80 text-sm">Professional jamoa</div>
-              </div>
            </div>
         </div>
 

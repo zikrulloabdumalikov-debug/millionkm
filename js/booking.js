@@ -73,11 +73,11 @@ window.StatusChecker = ({ showToast, onRegister, onOneTime }) => {
   );
 };
 
-// Brand Grid (Improved Layout)
+// Brand Grid (No Logos, Text Only)
 window.BrandGrid = ({ user, onOrder, onOpenAuth }) => {
   const [selectedBrand, setSelectedBrand] = React.useState(null);
   const [selectedModel, setSelectedModel] = React.useState(null);
-  const { CAR_DATA, BRAND_LOGOS } = window;
+  const { CAR_DATA } = window;
 
   const submitOrder = (type) => {
     if (!user) return onOpenAuth();
@@ -103,22 +103,25 @@ window.BrandGrid = ({ user, onOrder, onOpenAuth }) => {
              <div 
                key={brand}
                onClick={() => { setSelectedBrand(brand); setSelectedModel(null); }}
-               className={`p-8 rounded-[24px] border cursor-pointer flex flex-col items-center justify-center h-[200px] transition-all duration-300 hover:shadow-xl ${selectedBrand === brand ? 'border-[#0071E3] ring-2 ring-[#0071E3]/20 bg-blue-50/20' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+               className={`p-10 rounded-[24px] border cursor-pointer flex flex-col items-center justify-center min-h-[180px] transition-all duration-300 hover:shadow-xl ${selectedBrand === brand ? 'border-[#0071E3] ring-2 ring-[#0071E3]/20 bg-blue-50/20' : 'border-gray-100 bg-white hover:border-gray-200'}`}
              >
-                <img src={BRAND_LOGOS[brand]} className={`h-16 object-contain transition-all duration-300 ${selectedBrand === brand ? 'scale-110' : 'grayscale opacity-60 hover:grayscale-0 hover:opacity-100'}`} />
+                <div className="text-2xl font-bold uppercase tracking-tight text-[#1D1D1F] mb-4">{brand}</div>
+                <button className={`text-xs font-bold px-4 py-2 rounded-full transition-colors ${selectedBrand === brand ? 'bg-[#0071E3] text-white' : 'bg-gray-100 text-[#86868B]'}`}>
+                   Modelni tanlash
+                </button>
              </div>
            ))}
         </div>
 
         {selectedBrand && (
            <div className="mt-12 animate-fade-up">
-              <h3 className="text-2xl font-bold text-[#1D1D1F] mb-6 capitalize px-2">{selectedBrand} Modellari</h3>
+              <h3 className="text-2xl font-bold text-[#1D1D1F] mb-6 capitalize px-2 text-center md:text-left">{selectedBrand} Modellari</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                  {Object.keys(CAR_DATA[selectedBrand]).map(model => (
                     <button 
                       key={model} 
                       onClick={() => setSelectedModel(model)}
-                      className={`p-4 rounded-xl font-semibold text-sm transition-all border ${selectedModel === model ? 'bg-[#1D1D1F] text-white border-black shadow-lg scale-[1.02]' : 'bg-[#F5F5F7] text-[#1D1D1F] border-transparent hover:bg-[#E8E8ED]'}`}
+                      className={`p-5 rounded-2xl font-semibold text-sm transition-all border ${selectedModel === model ? 'bg-[#1D1D1F] text-white border-black shadow-lg scale-[1.02]' : 'bg-[#F5F5F7] text-[#1D1D1F] border-transparent hover:bg-[#E8E8ED]'}`}
                     >
                        {model}
                     </button>

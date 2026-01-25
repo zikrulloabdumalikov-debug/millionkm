@@ -1,37 +1,29 @@
-// About Us
+// About Us (Clean Text Only)
 window.AboutUs = () => {
   return (
-    <div className="py-20 bg-white border-t border-gray-100">
-      <div className="max-w-[1080px] mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-           <div>
-              <span className="text-[#0071E3] font-bold uppercase tracking-widest text-xs mb-3 block">Bizning Falsafa</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-[#1D1D1F] mb-6 tracking-tight">Sifat — bu tasodif emas.</h2>
-              <p className="text-base md:text-lg text-[#86868B] mb-8 leading-relaxed">
-                 Million KM bu shunchaki ustaxona emas, bu sizning avtomobilingiz uchun "shifoxona". 
-                 Biz kasallikni davolamaymiz, biz uning oldini olamiz. Har bir detalga e'tibor beramiz.
-              </p>
-              
-              <div className="flex gap-4">
-                 <div className="flex-1 bg-[#F5F5F7] p-5 rounded-2xl">
-                    <div className="text-2xl font-bold text-[#1D1D1F] mb-1">25K+</div>
-                    <div className="text-[10px] text-[#86868B] font-bold uppercase tracking-wider">Mijozlar</div>
-                 </div>
-                 <div className="flex-1 bg-[#F5F5F7] p-5 rounded-2xl">
-                    <div className="text-2xl font-bold text-[#1D1D1F] mb-1">100%</div>
-                    <div className="text-[10px] text-[#86868B] font-bold uppercase tracking-wider">Kafolat</div>
-                 </div>
-              </div>
-           </div>
-           <div className="relative rounded-[32px] overflow-hidden shadow-xl aspect-square">
-              <img src="https://images.unsplash.com/photo-1486262715619-01b8c22971f5?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 text-white">
-                 <h3 className="text-xl font-bold">Professional Jamoa</h3>
-                 <p className="opacity-80 text-sm">Germaniya standartlari asosida</p>
-              </div>
-           </div>
-        </div>
+    <div className="py-24 bg-white border-t border-gray-100">
+      <div className="max-w-[900px] mx-auto px-6 text-center">
+         <span className="text-[#0071E3] font-bold uppercase tracking-widest text-xs mb-4 block">Bizning Falsafa</span>
+         <h2 className="text-4xl md:text-6xl font-bold text-[#1D1D1F] mb-8 tracking-tight leading-tight">Sifat — bu tasodif emas.</h2>
+         <p className="text-lg md:text-xl text-[#86868B] mb-12 leading-relaxed font-medium">
+            Million KM bu shunchaki ustaxona emas, bu sizning avtomobilingiz uchun "shifoxona". 
+            Biz kasallikni davolamaymiz, biz uning oldini olamiz. Har bir detalga e'tibor beramiz.
+         </p>
+         
+         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+             <div className="bg-[#F5F5F7] p-6 rounded-2xl">
+                <div className="text-3xl font-bold text-[#1D1D1F] mb-1">25K+</div>
+                <div className="text-[10px] text-[#86868B] font-bold uppercase tracking-wider">Mijozlar</div>
+             </div>
+             <div className="bg-[#F5F5F7] p-6 rounded-2xl">
+                <div className="text-3xl font-bold text-[#1D1D1F] mb-1">100%</div>
+                <div className="text-[10px] text-[#86868B] font-bold uppercase tracking-wider">Kafolat</div>
+             </div>
+             <div className="bg-[#F5F5F7] p-6 rounded-2xl col-span-2 md:col-span-1">
+                <div className="text-3xl font-bold text-[#1D1D1F] mb-1">24/7</div>
+                <div className="text-[10px] text-[#86868B] font-bold uppercase tracking-wider">Qo'llab-quvvatlash</div>
+             </div>
+         </div>
       </div>
     </div>
   );
