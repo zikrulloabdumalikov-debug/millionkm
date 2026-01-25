@@ -52,11 +52,11 @@ const App = () => {
       case 'fuel': return <MobileService type={currentView} user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />;
       case 'about': return <AboutUs />;
       default: return (
-        <div className="space-y-32 pb-40">
+        <div>
           <Hero onStart={() => setIsAuthModalOpen(true)} />
-          <div id="brands"><BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} /></div>
+          <BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />
           <Benefits />
-          <div id="status"><StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} /></div>
+          <StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} />
           <QuickServices onSelect={setCurrentView} />
           <NearestLocations />
         </div>
@@ -65,31 +65,38 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F9FA]">
+    <div className="min-h-screen flex flex-col">
       <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={() => {setCurrentUser(null); localStorage.removeItem('million_km_user');}} onLoginClick={() => setIsAuthModalOpen(true)} />
-      <main className="flex-grow pt-16 md:pt-0">{renderView()}</main>
-      <footer className="py-20 text-center text-gray-400 text-sm">© 2025 Million KM. Premium Service.</footer>
+      <main className="flex-grow">{renderView()}</main>
+      <footer className="py-12 bg-[#F5F5F7] text-center border-t border-gray-200">
+         <p className="text-xs text-[#86868b] font-medium">© 2025 Million KM. Barcha huquqlar himoyalangan.</p>
+      </footer>
       <AIConsultant />
       
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[300] bg-black text-white px-8 py-4 rounded-full shadow-2xl animate-spring">
-           {toast.message}
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] bg-white/80 backdrop-blur-xl text-[#1d1d1f] px-6 py-3 rounded-full shadow-xl border border-gray-100 font-medium animate-fade-up flex items-center gap-2">
+           <i className="fas fa-check-circle text-[#34C759]"></i> {toast.message}
         </div>
       )}
 
-      {/* Auth Modal */}
+      {/* Auth Modal (Clean) */}
       {isAuthModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-           <div className="bg-white p-10 rounded-[2.5rem] w-full max-w-md space-y-4">
-              <h2 className="text-3xl font-bold">Kirish</h2>
-              <input className="w-full p-4 bg-gray-50 rounded-xl" placeholder="Ism" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
-              {loginForm.name === 'admin' ? 
-                 <input className="w-full p-4 bg-gray-50 rounded-xl" type="password" placeholder="Parol" onChange={e => setLoginForm({...loginForm, password: e.target.value})} /> :
-                 <input className="w-full p-4 bg-gray-50 rounded-xl" placeholder="Telefon" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
-              }
-              <button onClick={handleLogin} className="w-full py-4 bg-black text-white rounded-xl font-bold">Kirish</button>
-              <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-4 text-gray-500">Yopish</button>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
+           <div className="bg-white p-10 rounded-[32px] w-full max-w-sm shadow-2xl relative animate-fade-up">
+              <div className="text-center mb-8">
+                 <h2 className="text-3xl font-bold text-[#1d1d1f] mb-2">Kirish</h2>
+                 <p className="text-[#86868b] text-sm">Tizimga kirish uchun ma'lumotlarni kiriting.</p>
+              </div>
+              <div className="space-y-4">
+                 <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" placeholder="Ismingiz" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
+                 {loginForm.name === 'admin' ? 
+                    <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" type="password" placeholder="Parol" onChange={e => setLoginForm({...loginForm, password: e.target.value})} /> :
+                    <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" placeholder="Telefon" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
+                 }
+                 <button onClick={handleLogin} className="apple-btn w-full py-4 text-lg mt-4 shadow-lg shadow-blue-500/20">Kirish</button>
+                 <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-3 text-[#0071E3] text-sm font-medium">Bekor qilish</button>
+              </div>
            </div>
         </div>
       )}
