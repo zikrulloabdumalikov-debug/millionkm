@@ -1,183 +1,225 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { User, Order } from './types';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import StatusChecker from './components/StatusChecker';
-import BrandGrid from './components/BrandGrid';
-import Cabinet from './components/Cabinet';
-import Admin from './components/Admin';
-import MobileService from './components/MobileService';
-import AIConsultant from './components/AIConsultant';
-import AboutUs from './components/AboutUs';
-import NearestLocations from './components/NearestLocations';
-import Benefits from './components/Benefits';
-import QuickServices from './components/QuickServices';
-import { sendTelegramNotification } from './services/telegramService';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { GoogleGenAI } from "@google/genai";
+import { CAR_DATA, ONE_TIME_SERVICES } from './constants';
 
-type ToastType = 'success' | 'error';
-interface ToastState {
-  message: string;
-  type: ToastType;
-  isExiting: boolean;
-}
+// --- Services ---
+const sendToTelegram = async (msg: string) => {
+  const token = "7722483735:AAG_LZ1Bg0H-mnqAlnw4OknNj-BTrqM8CWM";
+  const chat_id = "-1003461463026";
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id, text: msg, parse_mode: 'HTML' })
+    });
+  } catch (e) { console.error(e); }
+};
 
-type View = 'home' | 'cabinet' | 'admin' | 'express' | 'fuel' | 'about' | 'locations';
+const getAIAdvice = async (model: string, problem: string) => {
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: `Mijoz mashinasi: ${model}. Muammo: ${problem}. Million KM servis nomidan qisqa va aniq o'zbekcha maslahat ber.`
+    });
+    return response.text;
+  } catch (e) { return "Kechirasiz, texnik nosozlik."; }
+};
 
-const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>('home');
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [toast, setToast] = useState<ToastState | null>(null);
-
-  const [loginForm, setLoginForm] = useState({ name: '', phone: '', password: '' });
-
-  const showToast = useCallback((message: string, type: ToastType = 'success') => {
-    setToast({ message, type, isExiting: false });
-    setTimeout(() => setToast(prev => prev ? { ...prev, isExiting: true } : null), 3500);
-    setTimeout(() => setToast(null), 4000);
-  }, []);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('million_km_user');
-    const savedOrders = localStorage.getItem('million_km_orders');
-    if (savedUser) setCurrentUser(JSON.parse(savedUser));
-    if (savedOrders) setOrders(JSON.parse(savedOrders));
-  }, []);
-
-  const addOrder = async (orderData: Partial<Order>) => {
-    const newOrder: Order = {
-      id: Math.random().toString(36).substr(2, 9),
-      userName: orderData.userName || currentUser?.name || 'Mehmon',
-      brand: orderData.brand || 'Nomaʼlum',
-      model: orderData.model || 'Nomaʼlum',
-      serviceType: orderData.serviceType || 'Xizmat',
-      phone: orderData.phone || currentUser?.phone || '',
-      note: orderData.note || '',
-      timestamp: new Date().toLocaleString('uz-UZ'),
-    };
-
-    const tgMessage = `🚀 <b>Yangi Buyurtma</b>\nMijoz: ${newOrder.userName}\nTel: ${newOrder.phone}\nXizmat: ${newOrder.serviceType}`;
-    await sendTelegramNotification(tgMessage);
-
-    const updated = [newOrder, ...orders];
-    setOrders(updated);
-    localStorage.setItem('million_km_orders', JSON.stringify(updated));
-    showToast("Buyurtma qabul qilindi");
-  };
-
-  const handleLoginSubmit = () => {
-    if (loginForm.name.toLowerCase() === 'admin' && loginForm.password === '123') {
-      const adminUser: User = { uid: 'a1', name: 'Admin', email: '', phone: '', gender: '', isAdmin: true };
-      setCurrentUser(adminUser);
-      localStorage.setItem('million_km_user', JSON.stringify(adminUser));
-      setIsAuthModalOpen(false);
-      showToast("Xush kelibsiz, Admin");
-      return;
-    }
-
-    if (!loginForm.name || !loginForm.phone) {
-      showToast("Ma'lumotlar to'liq emas", "error");
-      return;
-    }
-
-    const user: User = { uid: 'u-' + Date.now(), name: loginForm.name, email: '', phone: loginForm.phone, gender: '', isAdmin: false };
-    setCurrentUser(user);
-    localStorage.setItem('million_km_user', JSON.stringify(user));
-    setIsAuthModalOpen(false);
-    showToast(`Salom, ${user.name}`);
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('million_km_user');
-    setCurrentView('home');
-    showToast("Tizimdan chiqdingiz");
-  };
-
-  const renderView = () => {
-    switch (currentView) {
-      case 'cabinet': return currentUser ? <Cabinet user={currentUser} showToast={showToast} onOrder={addOrder} /> : <Hero onStart={() => setIsAuthModalOpen(true)} />;
-      case 'admin': return currentUser?.isAdmin ? <Admin orders={orders} /> : <div className="p-20 text-center font-bold text-red-500">Ruxsat yo'q</div>;
-      case 'express':
-      case 'fuel': return <MobileService type={currentView} user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />;
-      case 'about': return <AboutUs />;
-      default: return (
-        <div className="space-y-32 pb-40">
-          <Hero onStart={() => setIsAuthModalOpen(true)} />
-          <div id="brands" className="max-w-[1200px] mx-auto px-6"><BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} /></div>
-          <div id="benefits" className="max-w-[1200px] mx-auto px-6"><Benefits /></div>
-          <div id="status" className="max-w-[900px] mx-auto px-6"><StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} /></div>
-          <div id="quick-services-view" className="max-w-[1200px] mx-auto px-6"><QuickServices onSelect={setCurrentView} /></div>
-          <div id="locations" className="max-w-[1200px] mx-auto px-6"><NearestLocations /></div>
+// --- Sub-Components ---
+const Navbar = ({ view, setView, user, onLogin, onLogout }: any) => (
+  <nav className="fixed top-0 left-0 right-0 z-[100] p-6">
+    <div className="max-w-7xl mx-auto h-16 apple-glass squircle px-8 flex items-center justify-between shadow-2xl shadow-black/5">
+      <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setView('home')}>
+        <div className="w-9 h-9 bg-black rounded-xl flex items-center justify-center">
+          <i className="fas fa-road text-white text-sm"></i>
         </div>
-      );
-    }
+        <span className="font-black tracking-tighter text-xl">Million KM</span>
+      </div>
+      <div className="hidden md:flex items-center space-x-8 text-[10px] font-black uppercase tracking-widest text-gray-400">
+        <button onClick={() => setView('home')} className={`hover:text-black transition-colors ${view === 'home' ? 'text-black' : ''}`}>Asosiy</button>
+        <button onClick={() => setView('about')} className={`hover:text-black transition-colors ${view === 'about' ? 'text-black' : ''}`}>Haqimizda</button>
+      </div>
+      <div className="flex items-center space-x-4">
+        {user ? (
+          <button onClick={() => setView('cabinet')} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center tap-active">
+            <i className="fas fa-user text-xs"></i>
+          </button>
+        ) : (
+          <button onClick={onLogin} className="bg-black text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest tap-active">Kirish</button>
+        )}
+      </div>
+    </div>
+  </nav>
+);
+
+const AIConsultant = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([{ role: 'ai', text: 'Assalomu alaykum! Million KM AI mexanik xizmatingizda.' }]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    const userText = input;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: userText }]);
+    setLoading(true);
+    const advice = await getAIAdvice('Avtomobil', userText);
+    setMessages(prev => [...prev, { role: 'ai', text: advice || '' }]);
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen selection:bg-blue-100 flex flex-col">
-      <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={handleLogout} onLoginClick={() => setIsAuthModalOpen(true)} />
-      
-      <main className="flex-grow">
-        {renderView()}
-      </main>
-
-      <footer className="py-20 border-t border-gray-100 bg-white/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-10">
-          <div className="text-center md:text-left">
-            <h3 className="text-xl font-extrabold tracking-tighter">Million KM</h3>
-            <p className="text-sm text-gray-400 mt-2 font-medium italic">Premium avto servis xizmati</p>
+    <div className="fixed bottom-6 right-6 z-[105]">
+      {!isOpen ? (
+        <button onClick={() => setIsOpen(true)} className="w-16 h-16 bg-black text-white rounded-2xl shadow-2xl flex items-center justify-center tap-active">
+          <i className="fas fa-robot text-xl"></i>
+        </button>
+      ) : (
+        <div className="w-80 md:w-96 apple-glass squircle-lg shadow-[0_30px_100px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col animate-spring">
+          <div className="p-6 bg-black text-white flex justify-between items-center">
+            <span className="font-black text-[10px] uppercase tracking-widest">AI Mexanik</span>
+            <button onClick={() => setIsOpen(false)}><i className="fas fa-times"></i></button>
           </div>
-          <div className="flex space-x-10 text-[13px] font-bold text-gray-500 uppercase tracking-widest">
-            <button onClick={() => setCurrentView('home')} className="hover:text-black">Bosh sahifa</button>
-            <button onClick={() => setCurrentView('about')} className="hover:text-black">Biz haqimizda</button>
-            <a href="tel:+998770200107" className="hover:text-black">Yordam</a>
+          <div className="h-80 overflow-y-auto p-6 space-y-4">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] p-4 rounded-2xl text-[13px] font-semibold leading-relaxed ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-slate-800'}`}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+            {loading && <div className="text-[10px] font-bold text-gray-400 animate-pulse">AI o'ylamoqda...</div>}
           </div>
-        </div>
-      </footer>
-
-      <AIConsultant />
-
-      {toast && (
-        <div className={`fixed top-0 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none ${toast.isExiting ? 'animate-dynamic-exit opacity-0' : 'animate-dynamic-island'}`}>
-          <div className={`mt-4 p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl transition-all duration-700 ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-500 shadow-lg shadow-blue-500/20' : 'bg-white/20'}`}>
-              <i className={`fas ${toast.type === 'success' ? 'fa-check' : 'fa-exclamation-triangle'} text-lg`}></i>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1.5">
-                {toast.type === 'success' ? 'Tizim xabari' : 'Diqqat qiling'}
-              </span>
-              <span className="font-bold text-[15px] tracking-tight">{toast.message}</span>
-            </div>
+          <div className="p-4 bg-white/50 border-t flex gap-2">
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} className="flex-1 h-12 px-4 rounded-xl bg-gray-100/50 outline-none text-sm font-bold" placeholder="Muammo nima?" />
+            <button onClick={handleSend} className="w-12 h-12 bg-black text-white rounded-xl"><i className="fas fa-paper-plane"></i></button>
           </div>
         </div>
       )}
+    </div>
+  );
+};
 
-      {isAuthModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md animate-in">
-          <div className="bg-white/90 backdrop-blur-3xl squircle p-10 w-full max-w-md shadow-2xl relative border border-white/50 animate-spring">
-            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-10 right-10 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
-            <h2 className="text-3xl font-extrabold tracking-tight mb-10">Kirish</h2>
-            <div className="space-y-6">
-               <div className="space-y-2">
-                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Shaxsingiz</label>
-                 <input type="text" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="To'liq ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-               </div>
-               {loginForm.name.toLowerCase() !== 'admin' ? (
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bog'lanish</label>
-                    <input type="tel" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-                  </div>
-               ) : (
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Pin kod</label>
-                    <input type="password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} placeholder="••••" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-center tracking-[0.5em]" />
-                  </div>
-               )}
-               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active shadow-xl shadow-gray-200 mt-4">Davom etish</button>
+const App = () => {
+  const [view, setView] = useState('home');
+  const [user, setUser] = useState<any>(null);
+  const [isAuth, setIsAuth] = useState(false);
+  const [loginForm, setLoginForm] = useState({ name: '', phone: '' });
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('mkm_user_v2');
+    if (saved) setUser(JSON.parse(saved));
+  }, []);
+
+  const showToast = (m: string) => {
+    setToast(m);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleLogin = () => {
+    if (!loginForm.name || !loginForm.phone) return showToast("To'ldiring");
+    const u = { name: loginForm.name, phone: loginForm.phone };
+    setUser(u);
+    localStorage.setItem('mkm_user_v2', JSON.stringify(u));
+    setIsAuth(false);
+    showToast(`Xush kelibsiz, ${u.name}`);
+  };
+
+  const createOrder = async (service: string) => {
+    if (!user) return setIsAuth(true);
+    const msg = `🚀 <b>Yangi Buyurtma</b>\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}\n🛠 Xizmat: ${service}`;
+    await sendToTelegram(msg);
+    showToast("Buyurtma qabul qilindi!");
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FBFBFF]">
+      <Navbar view={view} setView={setView} user={user} onLogin={() => setIsAuth(true)} onLogout={() => setUser(null)} />
+      
+      <main className="max-w-7xl mx-auto pt-32 px-6">
+        {view === 'home' && (
+          <div className="space-y-24 animate-spring">
+            {/* Hero */}
+            <div className="text-center space-y-10 py-20">
+              <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
+                Premium Auto Service 2025
+              </div>
+              <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] text-slate-900">
+                Avtomobilingiz <br /> <span className="text-blue-600">Million KM</span> uchun tayyormi?
+              </h1>
+              <p className="max-w-2xl mx-auto text-gray-500 text-lg font-medium leading-relaxed">
+                Biz nafaqat moy almashtiramiz, balki motor hayotini uzaytiramiz. <br /> Professional yondashuv va original sifat.
+              </p>
+              <div className="flex flex-col md:flex-row justify-center gap-4 pt-6">
+                <button onClick={() => setIsAuth(true)} className="px-12 h-16 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl tap-active">Hozir boshlash</button>
+                <button onClick={() => setView('about')} className="px-12 h-16 bg-white border border-gray-100 rounded-2xl font-black uppercase tracking-widest text-xs tap-active">Biz haqimizda</button>
+              </div>
+            </div>
+
+            {/* Brands */}
+            <div id="brands" className="grid md:grid-cols-3 gap-8 py-20">
+              {Object.keys(CAR_DATA).map(brand => (
+                <div key={brand} className="apple-glass p-12 squircle hover:border-blue-500 transition-all cursor-pointer group">
+                  <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">{brand}</h3>
+                  <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-10">Premium Original Xizmat</p>
+                  <button onClick={() => createOrder(`${brand.toUpperCase()} Servis`)} className="w-full py-5 bg-gray-100/50 rounded-xl font-black text-[10px] uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-all">Buyurtma berish</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {view === 'about' && (
+          <div className="py-20 max-w-3xl mx-auto text-center animate-spring space-y-8">
+            <h2 className="text-5xl font-black tracking-tighter uppercase">Million KM Oil</h2>
+            <p className="text-gray-500 leading-relaxed text-lg font-medium">
+              Bizning asosiy maqsadimiz — O'zbekistondagi har bir avtomobil egasiga xalqaro standartdagi premium servisni taqdim etish.
+              Dvigatel moyi, filtrlar va texnik ko'rik — bizda hamma narsa oliy darajada.
+            </p>
+            <button onClick={() => setView('home')} className="px-8 py-4 bg-black text-white rounded-xl font-black uppercase text-[10px]">Asosiyga qaytish</button>
+          </div>
+        )}
+
+        {view === 'cabinet' && user && (
+          <div className="py-20 animate-spring">
+             <div className="apple-glass p-12 squircle-lg shadow-xl mb-10">
+                <h2 className="text-4xl font-black tracking-tighter mb-4">Salom, {user.name}!</h2>
+                <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mb-8">Shaxsiy Garaj</p>
+                <div className="p-8 bg-blue-50/50 rounded-[2rem] border border-blue-100 flex items-center justify-between">
+                   <div>
+                     <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Kutilayotgan servis</span>
+                     <p className="text-2xl font-black text-slate-800 mt-2">Tez orada...</p>
+                   </div>
+                   <button onClick={() => createOrder('Garajdan so\'rov')} className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest">Xizmat so'rash</button>
+                </div>
+             </div>
+          </div>
+        )}
+      </main>
+
+      <AIConsultant />
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[200] apple-glass px-8 py-4 squircle shadow-2xl border-l-4 border-l-blue-600 animate-spring">
+          <span className="font-bold text-sm tracking-tight">{toast}</span>
+        </div>
+      )}
+
+      {/* Auth Modal */}
+      {isAuth && (
+        <div className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="bg-white/95 apple-glass p-12 squircle-lg w-full max-w-md shadow-2xl animate-spring">
+            <h2 className="text-4xl font-black tracking-tighter mb-10">Kirish</h2>
+            <div className="space-y-4">
+              <input value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="Ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-100 border-none outline-none font-bold" />
+              <input value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-100 border-none outline-none font-bold" />
+              <button onClick={handleLogin} className="w-full h-16 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs tap-active mt-4 shadow-xl">Davom etish</button>
+              <button onClick={() => setIsAuth(false)} className="w-full h-10 text-[10px] font-bold uppercase tracking-widest text-gray-400">Bekor qilish</button>
             </div>
           </div>
         </div>
