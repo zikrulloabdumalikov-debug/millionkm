@@ -1,16 +1,6 @@
+
 // Ma'lumotlar bazasi
 window.CAR_DATA = {
-  "liauto": {
-    "Li L6": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Premium krossover. Dvigatel va reductor uchun maxsus yondashuv." },
-    "Li L7": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Li L7 gibrid tizimi uchun original sintetik moylar." },
-    "Li L8": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Oilaviy Li L8 uchun mukammal himoya va servis." },
-    "Li L9": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Flagman Li L9. Eng yuqori sifat standarti." }
-  },
-  "kia": {
-    "Sonet": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1049000, "desc": "Yangi Sonet krossoveri uchun original KIA standartlari." },
-    "K5": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1399000, "desc": "Elegant K5 uchun yuqori sifatli texnik ko'rik." },
-    "Sportage": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "desc": "Sportage yo'ltanlamasi uchun ishonchli million km kafolati." }
-  },
   "chevrolet": {
     "Nexia 3": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Ishonchli va tejamkor Nexia 3 uchun original xizmat." },
     "Cobalt": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Oila avtomobili Cobalt uchun uzoq muddatli kafolat." },
@@ -21,13 +11,18 @@ window.CAR_DATA = {
     "Equinox": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1499000, "desc": "Equinox uchun maxsus sintetik moylar va filtrlar." },
     "Traverse": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1899000, "desc": "Katta oilaviy Traverse uchun kuchaytirilgan himoya." },
     "Tahoe": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 2199000, "desc": "Gigant Tahoe dvigateli uchun eng yuqori sifat standarti." }
+  },
+  "kia": {
+    "Sonet": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1049000, "desc": "Yangi Sonet krossoveri uchun original KIA standartlari." },
+    "K5": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1399000, "desc": "Elegant K5 uchun yuqori sifatli texnik ko'rik." },
+    "Sportage": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "desc": "Sportage yo'ltanlamasi uchun ishonchli million km kafolati." }
+  },
+  "liauto": {
+    "L6": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Premium krossover. Dvigatel va reductor uchun maxsus yondashuv." },
+    "L7": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "L7 gibrid tizimi uchun original sintetik moylar." },
+    "L8": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Oilaviy L8 uchun mukammal himoya va servis." },
+    "L9": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Flagman L9. Eng yuqori sifat standarti." }
   }
-};
-
-window.BRAND_LOGOS = {
-  "chevrolet": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/1200px-Chevrolet-logo.png",
-  "kia": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Kia_logo.svg/2560px-Kia_logo.svg.png",
-  "liauto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Li_Auto_logo.png/1200px-Li_Auto_logo.png"
 };
 
 // Telegram Sozlamalari

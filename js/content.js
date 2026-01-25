@@ -1,3 +1,4 @@
+
 // About Us (Clean Text Only)
 window.AboutUs = () => {
   return (
@@ -82,19 +83,19 @@ window.Benefits = () => {
   );
 };
 
-// Locations (Clean Map)
+// Locations (Call button made bigger)
 window.NearestLocations = () => {
   return (
     <div id="locations" className="py-24 bg-white">
       <div className="max-w-[1080px] mx-auto px-6">
-         <div className="grid md:grid-cols-3 gap-8 items-center mb-12">
-            <div className="md:col-span-2">
+         <div className="flex flex-col md:flex-row gap-8 items-center justify-between mb-12">
+            <div className="text-center md:text-left">
                <h2 className="text-3xl md:text-4xl font-bold text-[#1D1D1F] mb-3">Bizning Manzil</h2>
                <p className="text-[#86868B]">Markaziy filial va ofis.</p>
             </div>
-            <div className="text-right">
-               <a href="tel:+998770200107" className="apple-btn-blue inline-flex items-center gap-2">
-                 <i className="fas fa-phone-alt"></i> Qo'ng'iroq qilish
+            <div className="w-full md:w-auto">
+               <a href="tel:+998770200107" className="apple-btn-blue w-full md:w-auto px-10 py-5 text-lg rounded-full flex items-center justify-center gap-3 shadow-xl">
+                 <i className="fas fa-phone-alt"></i> Hozir Qo'ng'iroq Qilish
                </a>
             </div>
          </div>
