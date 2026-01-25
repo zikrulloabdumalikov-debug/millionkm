@@ -8,10 +8,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Babel Standalone: TSX ni brauzerda transpile qilish uchun -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     :root {
       --bg: #FBFBFF;
-      --card: rgba(255, 255, 255, 0.8);
+      --card: rgba(255, 255, 255, 0.75);
       --accent: #007AFF;
     }
     body { 
@@ -19,6 +21,7 @@
       background-color: var(--bg);
       -webkit-font-smoothing: antialiased;
       color: #1d1d1f;
+      overflow-x: hidden;
     }
     .apple-glass {
       background: var(--card);
@@ -29,31 +32,31 @@
     .squircle { border-radius: 32px; }
     .squircle-lg { border-radius: 48px; }
     @keyframes springIn {
-      0% { transform: scale(0.95) translateY(20px); opacity: 0; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
+      0% { transform: scale(0.95) translateY(20px); opacity: 0; filter: blur(10px); }
+      100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
     }
-    .animate-spring { animation: springIn 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+    .animate-spring { animation: springIn 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
     .tap-active:active { transform: scale(0.96); transition: transform 0.1s; }
     
-    /* Custom scrollbar for premium feel */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #e2e2e7; border-radius: 10px; border: 2px solid var(--bg); }
   </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "@google/genai": "https://esm.sh/@google/genai@1.38.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
 <body>
   <div id="root"></div>
-  <!-- Platforma avtomatik ravishda TSX ni JS ga o'giradi, shuning uchun to'g'ridan-to'g'ri import qilamiz -->
-  <script type="module" src="index.tsx"></script>
+  <!-- type="text/babel" va data-type="module" orqali TSX faylni yuklaymiz -->
+  <script type="text/babel" data-type="module" src="index.tsx"></script>
 </body>
 </html>
