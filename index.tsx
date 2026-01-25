@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleGenAI } from "@google/genai";
@@ -39,7 +38,7 @@ const BENEFITS = [
 // ==========================================
 // 2. UTILS
 // ==========================================
-const notifyTelegram = async (msg: string) => {
+const notifyTelegram = async (msg) => {
   try {
     await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
       method: 'POST',
@@ -49,14 +48,14 @@ const notifyTelegram = async (msg: string) => {
   } catch (e) { console.error("Telegram Error:", e); }
 };
 
-const formatMoney = (amount: number) => amount.toLocaleString() + " UZS";
+const formatMoney = (amount) => amount.toLocaleString() + " UZS";
 
 // ==========================================
 // 3. COMPONENTS
 // ==========================================
 
 // --- Navbar ---
-const Navbar = ({ view, setView, user, toggleAuth, onLogout }: any) => {
+const Navbar = ({ view, setView, user, toggleAuth, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -72,14 +71,14 @@ const Navbar = ({ view, setView, user, toggleAuth, onLogout }: any) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-500">
-            <button onClick={() => { setView('home'); document.getElementById('brands')?.scrollIntoView(); }} className="hover:text-black">Brendlar</button>
-            <button onClick={() => { setView('home'); document.getElementById('services')?.scrollIntoView(); }} className="hover:text-black">Xizmatlar</button>
-            <button onClick={() => { setView('home'); document.getElementById('benefits')?.scrollIntoView(); }} className="hover:text-black">Afzalliklar</button>
-            <button onClick={() => { setView('home'); document.getElementById('filiallar')?.scrollIntoView(); }} className="hover:text-black">Filiallar</button>
+            <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('brands')?.scrollIntoView({behavior: 'smooth'}), 100); }} className="hover:text-black transition-colors">Brendlar</button>
+            <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('services')?.scrollIntoView({behavior: 'smooth'}), 100); }} className="hover:text-black transition-colors">Xizmatlar</button>
+            <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('benefits')?.scrollIntoView({behavior: 'smooth'}), 100); }} className="hover:text-black transition-colors">Afzalliklar</button>
+            <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('filiallar')?.scrollIntoView({behavior: 'smooth'}), 100); }} className="hover:text-black transition-colors">Filiallar</button>
             
             {user ? (
               <div className="flex items-center space-x-4 ml-4">
-                <button onClick={() => setView('cabinet')} className="text-[#007aff] font-bold">Kabinet</button>
+                <button onClick={() => setView('cabinet')} className="text-[#007aff] font-bold bg-blue-50 px-3 py-1 rounded-lg">Kabinet</button>
                 {user.isAdmin && <button onClick={() => setView('admin')} className="text-black font-bold">Admin</button>}
                 <button onClick={onLogout} className="text-red-500"><i className="fas fa-sign-out-alt"></i></button>
               </div>
@@ -89,22 +88,22 @@ const Navbar = ({ view, setView, user, toggleAuth, onLogout }: any) => {
           </div>
 
           {/* Mobile Toggle */}
-          <button className="md:hidden text-2xl" onClick={() => setIsOpen(!isOpen)}>
+          <button className="md:hidden text-2xl w-10 h-10 flex items-center justify-center" onClick={() => setIsOpen(!isOpen)}>
             <i className={`fas ${isOpen ? 'fa-times' : 'fa-bars'}`}></i>
           </button>
         </div>
       </nav>
 
       {/* Mobile Menu */}
-      <div className={`fixed inset-0 z-40 bg-white transform ${isOpen ? 'translate-y-0' : '-translate-y-full'} transition-transform duration-300 md:hidden pt-20 px-6`}>
-         <div className="flex flex-col space-y-6 text-xl font-bold">
-            <button onClick={() => { setIsOpen(false); document.getElementById('brands')?.scrollIntoView(); }}>Brendlar</button>
-            <button onClick={() => { setIsOpen(false); document.getElementById('services')?.scrollIntoView(); }}>Xizmatlar</button>
-            <button onClick={() => { setIsOpen(false); setView('cabinet'); }} className="text-[#007aff]">Kabinet</button>
+      <div className={`fixed inset-0 z-40 bg-white transform ${isOpen ? 'translate-y-0' : '-translate-y-full'} transition-transform duration-300 md:hidden pt-24 px-6`}>
+         <div className="flex flex-col space-y-8 text-2xl font-bold">
+            <button className="text-left" onClick={() => { setIsOpen(false); document.getElementById('brands')?.scrollIntoView(); }}>Brendlar</button>
+            <button className="text-left" onClick={() => { setIsOpen(false); document.getElementById('services')?.scrollIntoView(); }}>Xizmatlar</button>
+            <button className="text-left text-[#007aff]" onClick={() => { setIsOpen(false); setView('cabinet'); }}>Kabinet</button>
             {user ? (
-               <button onClick={() => { setIsOpen(false); onLogout(); }} className="text-red-500">Chiqish</button>
+               <button className="text-left text-red-500" onClick={() => { setIsOpen(false); onLogout(); }}>Chiqish</button>
             ) : (
-               <button onClick={() => { setIsOpen(false); toggleAuth(); }}>Kirish</button>
+               <button className="text-left" onClick={() => { setIsOpen(false); toggleAuth(); }}>Kirish</button>
             )}
          </div>
       </div>
@@ -115,17 +114,17 @@ const Navbar = ({ view, setView, user, toggleAuth, onLogout }: any) => {
 // --- Main App ---
 const App = () => {
   const [view, setView] = useState('home');
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [loginForm, setLoginForm] = useState({ name: '', phone: '' });
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState(null);
   
   // Data State
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState(null);
   const [checker, setChecker] = useState({ brand: '', model: '', year: '', km: '' });
-  const [checkResult, setCheckResult] = useState<any>(null);
-  const [cars, setCars] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
+  const [checkResult, setCheckResult] = useState(null);
+  const [cars, setCars] = useState([]);
+  const [orders, setOrders] = useState([]);
   
   // Chat State
   const [chatOpen, setChatOpen] = useState(false);
@@ -135,22 +134,22 @@ const App = () => {
 
   // Initialize
   useEffect(() => {
-    const u = localStorage.getItem('mkm_user');
+    const u = localStorage.getItem('mkm_user_v2');
     if (u) {
       const parsed = JSON.parse(u);
       setUser(parsed);
       loadUserData(parsed.uid);
     }
-    const savedOrders = localStorage.getItem('mkm_orders');
+    const savedOrders = localStorage.getItem('mkm_orders_v2');
     if (savedOrders) setOrders(JSON.parse(savedOrders));
   }, []);
 
-  const loadUserData = (uid: string) => {
-    const savedCars = localStorage.getItem(`mkm_cars_${uid}`);
+  const loadUserData = (uid) => {
+    const savedCars = localStorage.getItem(`mkm_cars_${uid}_v2`);
     if (savedCars) setCars(JSON.parse(savedCars));
   };
 
-  const showToastMsg = (msg: string) => {
+  const showToastMsg = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
   };
@@ -168,7 +167,7 @@ const App = () => {
     };
 
     setUser(newUser);
-    localStorage.setItem('mkm_user', JSON.stringify(newUser));
+    localStorage.setItem('mkm_user_v2', JSON.stringify(newUser));
     setShowAuth(false);
     showToastMsg(`Xush kelibsiz, ${newUser.name}`);
     await notifyTelegram(`👤 <b>Yangi Foydalanuvchi</b>\nIsm: ${newUser.name}\nTel: ${newUser.phone}`);
@@ -176,12 +175,12 @@ const App = () => {
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem('mkm_user');
+    localStorage.removeItem('mkm_user_v2');
     setView('home');
   };
 
   // Order Logic
-  const handleOrder = async (type: string, details: string) => {
+  const handleOrder = async (type, details) => {
     if (!user) {
       setShowAuth(true);
       return;
@@ -196,7 +195,7 @@ const App = () => {
     };
     const updated = [newOrder, ...orders];
     setOrders(updated);
-    localStorage.setItem('mkm_orders', JSON.stringify(updated));
+    localStorage.setItem('mkm_orders_v2', JSON.stringify(updated));
     showToastMsg("Buyurtma qabul qilindi!");
     await notifyTelegram(`📦 <b>Yangi Buyurtma</b>\nMijoz: ${user.name}\nTel: ${user.phone}\nXizmat: ${type}\nTafsilot: ${details}`);
   };
@@ -237,7 +236,8 @@ const App = () => {
       });
       const reply = response.text;
       setChatHistory(prev => [...prev, { role: 'ai', text: reply }]);
-    } catch {
+    } catch (e) {
+      console.error(e);
       setChatHistory(prev => [...prev, { role: 'ai', text: 'Kechirasiz, aloqada xatolik.' }]);
     } finally {
       setIsTyping(false);
@@ -245,11 +245,16 @@ const App = () => {
   };
 
   // Cabinet Logic
-  const addCar = async (carData: any) => {
-    const newCar = { ...carData, id: Date.now(), lastOil: parseInt(carData.lastOil), daily: parseInt(carData.daily) };
+  const addCar = async (carData) => {
+    const newCar = { 
+      ...carData, 
+      id: Date.now(), 
+      lastOil: parseInt(carData.lastOil), 
+      daily: parseInt(carData.daily) 
+    };
     const updated = [...cars, newCar];
     setCars(updated);
-    localStorage.setItem(`mkm_cars_${user.uid}`, JSON.stringify(updated));
+    localStorage.setItem(`mkm_cars_${user.uid}_v2`, JSON.stringify(updated));
     showToastMsg("Mashina qo'shildi");
     await notifyTelegram(`🚗 <b>Yangi Mashina</b>\nMijoz: ${user.name}\nMashina: ${newCar.brand} ${newCar.model}`);
   };
@@ -263,6 +268,7 @@ const App = () => {
         <div className="pt-20 animate-fade">
           {/* Hero */}
           <section className="text-center py-20 px-6 max-w-4xl mx-auto">
+             <div className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-widest mb-8">Premium Auto Care 2025</div>
              <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">Million km</h1>
              <p className="text-xl md:text-2xl text-gray-500 font-medium mb-4">Ko'pchilik dvigatelni ta'mirlaydi.</p>
              <p className="text-xl md:text-2xl text-[#1d1d1f] font-semibold mb-10">Biz esa uni saqlab qolamiz.</p>
@@ -274,13 +280,13 @@ const App = () => {
 
           {/* Brands */}
           <section id="brands" className="py-16 px-6 max-w-7xl mx-auto">
-             <h2 className="text-3xl font-bold mb-8">Qo'llab-quvvatlanadigan brendlar</h2>
+             <h2 className="text-3xl font-bold mb-8 text-center">Qo'llab-quvvatlanadigan brendlar</h2>
              <div className="grid md:grid-cols-3 gap-6">
                {Object.keys(CAR_DATA).map(brand => (
-                 <div key={brand} className="apple-glass p-8 squircle hover:shadow-xl transition-all">
-                    <h3 className="text-2xl font-bold capitalize mb-2">{brand === 'liauto' ? 'Li Auto' : brand}</h3>
-                    <p className="text-gray-500 text-sm mb-6">Million km standartlariga mos eng so'nggi {brand} modellari</p>
-                    <button onClick={() => setSelectedBrand(brand)} className="bg-[#f5f5f7] px-6 py-2 rounded-xl text-sm font-bold hover:bg-black hover:text-white transition-colors">Modellarni tanlash</button>
+                 <div key={brand} className="apple-glass p-8 squircle hover:shadow-xl transition-all text-center">
+                    <h3 className="text-3xl font-black capitalize mb-2">{brand === 'liauto' ? 'Li Auto' : brand}</h3>
+                    <p className="text-gray-500 text-sm mb-8 font-medium">Million km standartlariga mos</p>
+                    <button onClick={() => setSelectedBrand(brand)} className="w-full bg-[#f5f5f7] py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors">Modellarni ko'rish</button>
                  </div>
                ))}
              </div>
@@ -288,20 +294,20 @@ const App = () => {
 
           {/* Model Selection Modal */}
           {selectedBrand && (
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-               <div className="bg-white rounded-[32px] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 animate-fade">
-                  <div className="flex justify-between items-center mb-8">
-                     <h2 className="text-3xl font-bold capitalize">{selectedBrand} Modellari</h2>
-                     <button onClick={() => setSelectedBrand(null)} className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"><i className="fas fa-times"></i></button>
+            <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+               <div className="bg-white rounded-[32px] w-full max-w-5xl max-h-[85vh] overflow-y-auto p-8 md:p-12 animate-fade">
+                  <div className="flex justify-between items-center mb-10">
+                     <h2 className="text-4xl font-bold capitalize">{selectedBrand} Modellari</h2>
+                     <button onClick={() => setSelectedBrand(null)} className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200"><i className="fas fa-times text-xl"></i></button>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-6">
-                     {Object.entries(CAR_DATA[selectedBrand]).map(([model, info]: any) => (
-                        <div key={model} className="border p-6 rounded-3xl hover:border-[#007aff] transition-colors">
-                           <h4 className="text-xl font-bold mb-2">{model}</h4>
-                           <p className="text-gray-500 text-sm mb-4">{info.desc}</p>
-                           <div className="flex justify-between items-center">
-                              <span className="font-bold text-[#007aff]">{formatMoney(info.price)}</span>
-                              <button onClick={() => { handleOrder(selectedBrand, `Model: ${model}`); setSelectedBrand(null); }} className="bg-black text-white px-4 py-2 rounded-xl text-xs font-bold">Buyurtma</button>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     {Object.entries(CAR_DATA[selectedBrand]).map(([model, info]: [string, any]) => (
+                        <div key={model} className="border border-gray-100 p-8 rounded-[24px] hover:border-[#007aff] hover:shadow-lg transition-all">
+                           <h4 className="text-2xl font-bold mb-3">{model}</h4>
+                           <p className="text-gray-500 text-sm mb-6 leading-relaxed">{info.desc}</p>
+                           <div className="flex flex-col gap-4 mt-auto">
+                              <div className="text-xl font-black text-[#007aff]">{formatMoney(info.price)}</div>
+                              <button onClick={() => { handleOrder(selectedBrand, `Model: ${model}`); setSelectedBrand(null); }} className="w-full bg-black text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest tap-active">Buyurtma berish</button>
                            </div>
                         </div>
                      ))}
@@ -312,37 +318,37 @@ const App = () => {
 
           {/* Services */}
           <section id="services" className="py-16 px-6 max-w-7xl mx-auto">
-             <h2 className="text-3xl font-bold mb-8">Maxsus xizmatlar</h2>
+             <h2 className="text-3xl font-bold mb-8 text-center">Maxsus xizmatlar</h2>
              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-white p-8 squircle shadow-sm border border-gray-100">
-                   <div className="text-4xl mb-4">🚀</div>
-                   <h3 className="text-2xl font-bold mb-2">Million km Express</h3>
-                   <p className="text-gray-500 mb-6">Million km standardi asosida, manzilga borib xizmat ko'rsatish.</p>
-                   <button onClick={() => handleOrder('Express', 'Manzilga borish')} className="bg-[#007aff] text-white px-6 py-3 rounded-xl font-bold text-sm w-full">Xizmatni tanlash</button>
+                <div className="bg-blue-600 text-white p-10 squircle shadow-xl shadow-blue-200">
+                   <div className="text-5xl mb-6"><i className="fas fa-bolt"></i></div>
+                   <h3 className="text-3xl font-bold mb-3">Million km Express</h3>
+                   <p className="text-blue-100 mb-8 text-lg">Manzilingizga borib, 30 daqiqada professional xizmat ko'rsatamiz.</p>
+                   <button onClick={() => handleOrder('Express', 'Manzilga borish')} className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-xs uppercase tracking-widest w-full hover:bg-blue-50">Xizmatni tanlash</button>
                 </div>
-                <div className="bg-white p-8 squircle shadow-sm border border-gray-100">
-                   <div className="text-4xl mb-4">⛽</div>
-                   <h3 className="text-2xl font-bold mb-2">Million km Fuel</h3>
-                   <p className="text-gray-500 mb-6">Million km talablariga mos, sifatli yoqilg'i yetkazib berish.</p>
-                   <button onClick={() => handleOrder('Fuel', 'Yoqilg\'i yetkazish')} className="bg-black text-white px-6 py-3 rounded-xl font-bold text-sm w-full">Xarid qilish</button>
+                <div className="bg-black text-white p-10 squircle shadow-xl">
+                   <div className="text-5xl mb-6"><i className="fas fa-gas-pump"></i></div>
+                   <h3 className="text-3xl font-bold mb-3">Million km Fuel</h3>
+                   <p className="text-gray-400 mb-8 text-lg">Sifatli yoqilg'i tugab qoldimi? Biz yetkazib beramiz.</p>
+                   <button onClick={() => handleOrder('Fuel', 'Yoqilg\'i yetkazish')} className="bg-white text-black px-8 py-4 rounded-xl font-bold text-xs uppercase tracking-widest w-full hover:bg-gray-200">Buyurtma berish</button>
                 </div>
              </div>
           </section>
 
           {/* Benefits */}
-          <section id="benefits" className="py-16 px-6 max-w-7xl mx-auto bg-white rounded-[40px] mb-16">
-             <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Nega aynan Million km?</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto">Chunki biz shunchaki avtomobilga xizmat ko'rsatmaymiz — sizga ishonch, kafolat va qulaylik hadya qilamiz.</p>
+          <section id="benefits" className="py-20 px-6 max-w-7xl mx-auto bg-white rounded-[40px] mb-16 shadow-sm border border-gray-100">
+             <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold mb-4">Nega aynan Million km?</h2>
+                <p className="text-gray-500 max-w-2xl mx-auto text-lg">Chunki biz shunchaki avtomobilga xizmat ko'rsatmaymiz — sizga ishonch, kafolat va qulaylik hadya qilamiz.</p>
              </div>
-             <div className="grid md:grid-cols-3 gap-8">
+             <div className="grid md:grid-cols-3 gap-10">
                 {BENEFITS.map((b, i) => (
-                   <div key={i} className="text-center p-6">
-                      <div className="w-16 h-16 bg-gray-50 text-[#007aff] rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6">
+                   <div key={i} className="text-center p-6 hover:bg-gray-50 rounded-3xl transition-colors">
+                      <div className="w-20 h-20 bg-blue-50 text-[#007aff] rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-sm">
                          <i className={`fas ${b.icon}`}></i>
                       </div>
-                      <h3 className="text-lg font-bold mb-2">{b.title}</h3>
-                      <p className="text-gray-500 text-sm">{b.desc}</p>
+                      <h3 className="text-xl font-bold mb-3">{b.title}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed">{b.desc}</p>
                    </div>
                 ))}
              </div>
@@ -350,33 +356,46 @@ const App = () => {
 
           {/* Status Checker */}
           <section id="status" className="py-20 px-6 max-w-3xl mx-auto text-center">
-             <h2 className="text-3xl font-bold mb-2">Mashinangiz statusini tekshiring</h2>
-             <p className="text-gray-500 mb-10">Million km xizmatiga mos ekanligini aniqlang</p>
+             <span className="text-blue-600 font-bold uppercase tracking-widest text-xs mb-4 block">Diagnostika</span>
+             <h2 className="text-4xl font-bold mb-4">Mashinangiz statusini tekshiring</h2>
+             <p className="text-gray-500 mb-12">Million km xizmatiga mos ekanligini bir zumda aniqlang</p>
              
-             <div className="bg-white p-8 squircle-lg shadow-xl border border-gray-100 text-left">
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
-                   <select className="w-full h-14 bg-[#f5f5f7] rounded-xl px-4 font-bold outline-none" value={checker.brand} onChange={e => setChecker({...checker, brand: e.target.value, model: ''})}>
-                      <option value="">Brendni tanlang</option>
-                      {Object.keys(CAR_DATA).map(b => <option key={b} value={b}>{b.toUpperCase()}</option>)}
-                   </select>
-                   <select className="w-full h-14 bg-[#f5f5f7] rounded-xl px-4 font-bold outline-none" disabled={!checker.brand} value={checker.model} onChange={e => setChecker({...checker, model: e.target.value})}>
-                      <option value="">Modelni tanlang</option>
-                      {checker.brand && Object.keys(CAR_DATA[checker.brand]).map(m => <option key={m} value={m}>{m}</option>)}
-                   </select>
+             <div className="bg-white p-8 md:p-12 squircle-lg shadow-2xl border border-gray-100 text-left">
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-400 uppercase ml-2">Brend</label>
+                     <select className="w-full h-16 bg-[#f5f5f7] rounded-2xl px-6 font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none" value={checker.brand} onChange={e => setChecker({...checker, brand: e.target.value, model: ''})}>
+                        <option value="">Tanlang...</option>
+                        {Object.keys(CAR_DATA).map(b => <option key={b} value={b}>{b.toUpperCase()}</option>)}
+                     </select>
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-400 uppercase ml-2">Model</label>
+                     <select className="w-full h-16 bg-[#f5f5f7] rounded-2xl px-6 font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none" disabled={!checker.brand} value={checker.model} onChange={e => setChecker({...checker, model: e.target.value})}>
+                        <option value="">Tanlang...</option>
+                        {checker.brand && Object.keys(CAR_DATA[checker.brand]).map(m => <option key={m} value={m}>{m}</option>)}
+                     </select>
+                   </div>
                 </div>
-                <div className="grid md:grid-cols-2 gap-4 mb-8">
-                   <input type="number" placeholder="Yili (2023)" className="w-full h-14 bg-[#f5f5f7] rounded-xl px-4 font-bold outline-none" value={checker.year} onChange={e => setChecker({...checker, year: e.target.value})} />
-                   <input type="text" placeholder="KM (45000)" className="w-full h-14 bg-[#f5f5f7] rounded-xl px-4 font-bold outline-none" value={checker.km} onChange={e => setChecker({...checker, km: e.target.value})} />
+                <div className="grid md:grid-cols-2 gap-6 mb-10">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-400 uppercase ml-2">Yili</label>
+                     <input type="number" placeholder="2023" className="w-full h-16 bg-[#f5f5f7] rounded-2xl px-6 font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all" value={checker.year} onChange={e => setChecker({...checker, year: e.target.value})} />
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-400 uppercase ml-2">Yurgan masofasi</label>
+                     <input type="text" placeholder="45 000" className="w-full h-16 bg-[#f5f5f7] rounded-2xl px-6 font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all" value={checker.km} onChange={e => setChecker({...checker, km: e.target.value})} />
+                   </div>
                 </div>
-                <button onClick={runCheck} className="w-full h-14 bg-black text-white rounded-xl font-bold text-sm uppercase tracking-widest tap-active">Tekshirish</button>
+                <button onClick={runCheck} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active hover:bg-gray-900 shadow-xl">Tekshirish</button>
                 
                 {checkResult && (
-                   <div className={`mt-6 p-6 rounded-2xl ${checkResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'} font-bold text-center`}>
-                      <p className="mb-4">{checkResult.text}</p>
+                   <div className={`mt-8 p-8 rounded-3xl ${checkResult.success ? 'bg-green-50 text-green-800 border border-green-100' : 'bg-red-50 text-red-800 border border-red-100'} text-center animate-fade`}>
+                      <p className="mb-6 font-bold text-lg">{checkResult.text}</p>
                       {checkResult.success ? (
-                         <button onClick={() => setShowAuth(true)} className="px-6 py-2 bg-green-600 text-white rounded-lg text-sm">Ro'yxatdan o'tish</button>
+                         <button onClick={() => setShowAuth(true)} className="px-8 py-3 bg-green-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-green-200">Ro'yxatdan o'tish</button>
                       ) : (
-                         <button onClick={() => handleOrder('Bir martalik', `${checker.brand} ${checker.model}`)} className="px-6 py-2 bg-red-600 text-white rounded-lg text-sm">Bir martalik xizmat</button>
+                         <button onClick={() => handleOrder('Bir martalik', `${checker.brand} ${checker.model}`)} className="px-8 py-3 bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-200">Bir martalik xizmat</button>
                       )}
                    </div>
                 )}
@@ -385,61 +404,78 @@ const App = () => {
 
           {/* Branches */}
           <section id="filiallar" className="py-16 px-6 max-w-7xl mx-auto">
-             <h2 className="text-3xl font-bold mb-8 text-center">Million km filiallari</h2>
-             <div className="rounded-[32px] overflow-hidden shadow-2xl h-[400px]">
+             <h2 className="text-3xl font-bold mb-8 text-center">Filiallarimiz Xaritada</h2>
+             <div className="rounded-[40px] overflow-hidden shadow-2xl h-[450px] border border-gray-200">
                 <iframe src="https://yandex.uz/map-widget/v1/?ll=70.893061,40.546387&z=15&l=map&pt=70.893061,40.546387,pm2rdm" width="100%" height="100%" frameBorder="0"></iframe>
              </div>
           </section>
 
           {/* Footer */}
-          <footer className="bg-white py-12 text-center border-t border-gray-200 mt-20">
+          <footer className="bg-white py-16 text-center border-t border-gray-100 mt-20">
+             <div className="inline-block w-12 h-12 bg-black rounded-xl text-white flex items-center justify-center text-xl mb-6"><i className="fas fa-road"></i></div>
              <h3 className="text-2xl font-bold mb-2">Million km</h3>
-             <p className="text-gray-500 mb-8">Dvigatel uchun yangi avlod ishonchi</p>
-             <div className="flex justify-center space-x-6 text-gray-400 mb-8">
-                <a href="#" className="hover:text-[#007aff]">Instagram</a>
-                <a href="#" className="hover:text-[#007aff]">Telegram</a>
-                <a href="#" className="hover:text-[#007aff]">YouTube</a>
+             <p className="text-gray-400 mb-10 font-medium">Dvigatel uchun yangi avlod ishonchi</p>
+             <div className="flex justify-center space-x-8 text-gray-400 mb-10">
+                <a href="#" className="hover:text-[#007aff] transition-colors"><i className="fab fa-instagram text-2xl"></i></a>
+                <a href="#" className="hover:text-[#007aff] transition-colors"><i className="fab fa-telegram text-2xl"></i></a>
+                <a href="#" className="hover:text-[#007aff] transition-colors"><i className="fab fa-youtube text-2xl"></i></a>
              </div>
-             <p className="text-black font-bold">📞 Call center: +998 71 123 45 67</p>
+             <p className="text-slate-900 font-bold text-lg">📞 +998 71 123 45 67</p>
           </footer>
         </div>
       )}
 
       {/* --- CABINET VIEW --- */}
       {view === 'cabinet' && user && (
-         <div className="pt-24 px-6 max-w-7xl mx-auto animate-fade">
-            <div className="flex justify-between items-center mb-10">
-               <div>
-                  <h1 className="text-3xl font-bold">Salom, {user.name}</h1>
-                  <p className="text-gray-500">Shaxsiy garajingiz</p>
+         <div className="pt-28 px-6 max-w-7xl mx-auto animate-fade pb-20">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+               <div className="text-center md:text-left">
+                  <h1 className="text-4xl font-black tracking-tight mb-2">Salom, {user.name}</h1>
+                  <p className="text-gray-500 font-medium">Shaxsiy garaj va monitoring</p>
                </div>
                <button onClick={() => { 
-                  const b = prompt("Brend?"); const m = prompt("Model?"); const y = prompt("Yil?"); const l = prompt("Oxirgi moy km?"); const d = prompt("Kunlik km?");
-                  if(b&&m&&y&&l&&d) addCar({ brand: b, model: m, year: y, lastOil: l, daily: d });
-               }} className="bg-[#007aff] text-white px-6 py-3 rounded-xl font-bold text-sm">+ Mashina</button>
+                  const b = prompt("Brend?"); 
+                  if(b) {
+                    const m = prompt("Model?"); 
+                    const y = prompt("Yil?"); 
+                    const l = prompt("Oxirgi moy km?"); 
+                    const d = prompt("Kunlik km?");
+                    if(m&&y&&l&&d) addCar({ brand: b, model: m, year: parseInt(y), lastOil: l, daily: d });
+                  }
+               }} className="bg-[#007aff] text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-colors shadow-xl shadow-blue-200">+ Mashina qo'shish</button>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-               {cars.length === 0 ? <p className="text-gray-500">Garaj bo'sh.</p> : cars.map(car => {
+            <div className="grid md:grid-cols-2 gap-8">
+               {cars.length === 0 ? (
+                 <div className="col-span-2 py-20 text-center bg-white rounded-[3rem] border border-dashed border-gray-300">
+                   <div className="text-6xl text-gray-200 mb-6"><i className="fas fa-car"></i></div>
+                   <p className="text-gray-400 font-medium text-lg">Garajingiz hozircha bo'sh.</p>
+                 </div>
+               ) : cars.map(car => {
                   const limit = 8000;
-                  const current = 2000; // Mock current progress
+                  const current = 2000; // Mock data for demo
                   const percent = (current / limit) * 100;
                   return (
-                     <div key={car.id} className="bg-white p-8 squircle shadow-lg border border-gray-100">
-                        <div className="flex justify-between mb-6">
-                           <h3 className="text-xl font-bold">{car.brand} {car.model}</h3>
-                           <span className="text-gray-400">{car.year}</span>
+                     <div key={car.id} className="bg-white p-10 squircle shadow-lg border border-gray-100 hover:border-blue-200 transition-all">
+                        <div className="flex justify-between mb-8 items-start">
+                           <div>
+                             <h3 className="text-2xl font-black text-slate-900">{car.brand} {car.model}</h3>
+                             <p className="text-gray-400 font-bold text-xs uppercase mt-1">{car.year}-yil</p>
+                           </div>
+                           <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-400"><i className="fas fa-car-side"></i></div>
                         </div>
-                        <div className="mb-4">
-                           <div className="flex justify-between text-sm font-bold mb-2">
-                              <span className="text-gray-500">Servisgacha</span>
+                        <div className="mb-8">
+                           <div className="flex justify-between text-xs font-bold uppercase tracking-widest mb-3 text-gray-400">
+                              <span>Servisgacha</span>
                               <span className="text-[#007aff]">{limit - current} km</span>
                            </div>
-                           <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#007aff]" style={{ width: `${percent}%` }}></div>
+                           <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#007aff] rounded-full" style={{ width: `${percent}%` }}></div>
                            </div>
                         </div>
-                        <button onClick={() => handleOrder('Servis', `${car.brand} ${car.model}`)} className="w-full py-3 bg-black text-white rounded-xl font-bold text-sm mt-4">Servisga yozilish</button>
+                        <div className="flex gap-4">
+                          <button onClick={() => handleOrder('Servis', `${car.brand} ${car.model}`)} className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-600 transition-colors">Servisga yozilish</button>
+                        </div>
                      </div>
                   );
                })}
@@ -449,62 +485,69 @@ const App = () => {
 
       {/* --- ADMIN VIEW --- */}
       {view === 'admin' && user?.isAdmin && (
-         <div className="pt-24 px-6 max-w-7xl mx-auto animate-fade">
-            <h1 className="text-3xl font-bold mb-8">Admin Panel</h1>
-            <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
-               <table className="w-full text-left">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                     <tr>
-                        <th className="p-6">Mijoz</th>
-                        <th className="p-6">Xizmat</th>
-                        <th className="p-6">Vaqt</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {orders.map(o => (
-                        <tr key={o.id} className="border-b border-gray-100">
-                           <td className="p-6">
-                              <div className="font-bold">{o.userName}</div>
-                              <div className="text-sm text-gray-500">{o.phone}</div>
-                           </td>
-                           <td className="p-6">
-                              <div className="font-bold text-[#007aff]">{o.type}</div>
-                              <div className="text-sm text-gray-500">{o.details}</div>
-                           </td>
-                           <td className="p-6 text-sm text-gray-400">{o.timestamp}</td>
-                        </tr>
-                     ))}
-                  </tbody>
-               </table>
+         <div className="pt-28 px-6 max-w-7xl mx-auto animate-fade pb-20">
+            <h1 className="text-4xl font-black tracking-tight mb-8">Admin Panel</h1>
+            <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-gray-100">
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                       <tr>
+                          <th className="p-8 text-xs font-bold uppercase tracking-widest text-gray-400">Mijoz</th>
+                          <th className="p-8 text-xs font-bold uppercase tracking-widest text-gray-400">Xizmat turi</th>
+                          <th className="p-8 text-xs font-bold uppercase tracking-widest text-gray-400">Vaqt</th>
+                       </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                       {orders.length === 0 ? (
+                         <tr><td colSpan="3" className="p-10 text-center text-gray-400">Buyurtmalar yo'q</td></tr>
+                       ) : orders.map(o => (
+                          <tr key={o.id} className="hover:bg-gray-50/50">
+                             <td className="p-8">
+                                <div className="font-bold text-slate-900">{o.userName}</div>
+                                <div className="text-xs font-bold text-blue-600 mt-1">{o.phone}</div>
+                             </td>
+                             <td className="p-8">
+                                <div className="font-bold text-slate-900">{o.type}</div>
+                                <div className="text-xs text-gray-500 mt-1 max-w-xs truncate">{o.details}</div>
+                             </td>
+                             <td className="p-8 text-xs font-bold text-gray-400">{o.timestamp}</td>
+                          </tr>
+                       ))}
+                    </tbody>
+                 </table>
+               </div>
             </div>
          </div>
       )}
 
       {/* --- CHAT WIDGET --- */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-8 right-8 z-50">
          {!chatOpen ? (
-            <button onClick={() => setChatOpen(true)} className="w-16 h-16 bg-[#007aff] text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+            <button onClick={() => setChatOpen(true)} className="w-16 h-16 bg-black text-white rounded-[20px] shadow-2xl flex items-center justify-center text-2xl hover:scale-105 active:scale-95 transition-all">
                <i className="fas fa-comment-dots"></i>
             </button>
          ) : (
-            <div className="w-80 md:w-96 bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden animate-fade h-[500px]">
-               <div className="p-4 bg-[#007aff] text-white flex justify-between items-center">
-                  <span className="font-bold">Million km Support</span>
-                  <button onClick={() => setChatOpen(false)}><i className="fas fa-times"></i></button>
+            <div className="w-[90vw] md:w-96 bg-white rounded-[30px] shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-fade h-[600px] max-h-[80vh]">
+               <div className="p-6 bg-black text-white flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="font-bold text-sm tracking-wide">Million KM AI</span>
+                  </div>
+                  <button onClick={() => setChatOpen(false)} className="opacity-70 hover:opacity-100"><i className="fas fa-times"></i></button>
                </div>
-               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f5f5f7]">
+               <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f9f9f9]">
                   {chatHistory.map((msg, i) => (
                      <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-[#007aff] text-white' : 'bg-white text-black shadow-sm'}`}>
+                        <div className={`max-w-[85%] p-4 rounded-2xl text-sm font-medium leading-relaxed ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-slate-800 shadow-sm border border-gray-100 rounded-bl-none'}`}>
                            {msg.text}
                         </div>
                      </div>
                   ))}
-                  {isTyping && <div className="text-xs text-gray-400 ml-2">Yozmoqda...</div>}
+                  {isTyping && <div className="text-xs font-bold text-gray-400 ml-4 animate-pulse">AI yozmoqda...</div>}
                </div>
-               <div className="p-4 bg-white border-t flex gap-2">
-                  <input className="flex-1 bg-gray-100 rounded-xl px-4 text-sm outline-none" placeholder="Xabar yozing..." value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && sendChat()} />
-                  <button onClick={sendChat} className="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center"><i className="fas fa-paper-plane"></i></button>
+               <div className="p-4 bg-white border-t border-gray-100 flex gap-3">
+                  <input className="flex-1 bg-gray-50 rounded-xl px-5 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-100 transition-all" placeholder="Savolingizni yozing..." value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && sendChat()} />
+                  <button onClick={sendChat} className="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center hover:bg-gray-800 active:scale-95 transition-all"><i className="fas fa-paper-plane"></i></button>
                </div>
             </div>
          )}
@@ -512,21 +555,21 @@ const App = () => {
 
       {/* --- TOAST --- */}
       {toast && (
-         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-2xl border border-gray-200 font-bold animate-fade z-[100]">
+         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-xl px-8 py-4 rounded-2xl shadow-2xl border border-white/20 font-bold text-sm animate-fade z-[100] text-slate-900">
             {toast}
          </div>
       )}
 
       {/* --- AUTH MODAL --- */}
       {showAuth && (
-         <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
-            <div className="bg-white p-10 rounded-[40px] w-full max-w-md animate-fade shadow-2xl">
-               <h2 className="text-3xl font-bold mb-8 text-center">Tizimga Kirish</h2>
+         <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-6">
+            <div className="bg-white p-10 md:p-14 rounded-[40px] w-full max-w-md animate-fade shadow-2xl relative">
+               <button onClick={() => setShowAuth(false)} className="absolute top-8 right-8 w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center hover:bg-gray-100"><i className="fas fa-times"></i></button>
+               <h2 className="text-3xl font-black mb-8 text-center tracking-tight">Tizimga Kirish</h2>
                <div className="space-y-4">
-                  <input placeholder="Ismingiz" className="w-full h-14 bg-[#f5f5f7] rounded-xl px-6 font-bold outline-none" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
-                  <input placeholder="Telefon (+998)" className="w-full h-14 bg-[#f5f5f7] rounded-xl px-6 font-bold outline-none" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
-                  <button onClick={handleLogin} className="w-full h-14 bg-black text-white rounded-xl font-bold text-sm uppercase tracking-widest mt-4 tap-active">Kirish</button>
-                  <button onClick={() => setShowAuth(false)} className="w-full text-center text-gray-400 font-bold text-xs mt-4">YOPISH</button>
+                  <input placeholder="Ismingiz" className="w-full h-16 bg-[#f5f5f7] rounded-2xl px-6 font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
+                  <input placeholder="Telefon (+998)" className="w-full h-16 bg-[#f5f5f7] rounded-2xl px-6 font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
+                  <button onClick={handleLogin} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest mt-6 tap-active shadow-xl hover:bg-gray-900 transition-all">Kirish</button>
                </div>
             </div>
          </div>
@@ -535,5 +578,5 @@ const App = () => {
   );
 };
 
-const root = createRoot(document.getElementById('root')!);
+const root = createRoot(document.getElementById('root'));
 root.render(<App />);
