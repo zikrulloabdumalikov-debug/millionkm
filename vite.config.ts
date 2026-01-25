@@ -2,25 +2,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // REPO NOMINI TEKSHIRING: Agar repo nomi 'million-km' bo'lsa, base: '/million-km/' bo'lishi shart.
+  // REPO NOMINI TEKSHIRING: Agar repo 'million-km-' bo'lsa, bu to'g'ri. 
+  // Agar repo nomi shunchaki 'million-km' bo'lsa, base ni '/million-km/' qiling.
   base: '/million-km-/', 
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     assetsDir: 'assets',
-    sourcemap: false,
+    // Build vaqtida xatolarni kamaytirish uchun
+    minify: 'terser',
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
+        manualChunks: undefined,
       },
     },
   },
-  server: {
-    port: 3000,
-    open: true
-  }
 });
