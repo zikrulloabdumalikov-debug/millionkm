@@ -1,4 +1,4 @@
-// Quick Services
+// Quick Services (Balanced Cards)
 window.QuickServices = ({ onSelect }) => {
   return (
     <div className="py-24 bg-[#F5F5F7]">
@@ -57,7 +57,7 @@ window.QuickServices = ({ onSelect }) => {
   );
 };
 
-// Mobile Service Form (Polished)
+// Mobile Service Form (Clean)
 window.MobileService = ({ type, user, onOrder, onOpenAuth }) => {
   const [formData, setFormData] = React.useState({ name: user?.name || '', phone: user?.phone || '', location: '', note: '' });
   const isExpress = type === 'express';

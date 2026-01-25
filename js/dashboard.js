@@ -59,9 +59,9 @@ window.Cabinet = ({ user, showToast, onOrder }) => {
             <div className="bg-white p-8 rounded-[32px] w-full max-w-md shadow-2xl animate-scale border border-gray-100">
                <h3 className="text-2xl font-bold mb-6 text-[#1d1d1f]">Yangi Mashina</h3>
                <div className="space-y-4 mb-8">
-                  <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none font-medium text-[#1d1d1f]" placeholder="Brend (masalan: Chevrolet)" onChange={e => setNewCar({...newCar, brand: e.target.value})} />
-                  <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none font-medium text-[#1d1d1f]" placeholder="Model (masalan: Malibu)" onChange={e => setNewCar({...newCar, model: e.target.value})} />
-                  <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none font-medium text-[#1d1d1f]" placeholder="Probeg (km)" type="number" onChange={e => setNewCar({...newCar, lastOil: e.target.value})} />
+                  <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Brend (masalan: Chevrolet)" onChange={e => setNewCar({...newCar, brand: e.target.value})} />
+                  <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Model (masalan: Malibu)" onChange={e => setNewCar({...newCar, model: e.target.value})} />
+                  <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Probeg (km)" type="number" onChange={e => setNewCar({...newCar, lastOil: e.target.value})} />
                </div>
                <div className="flex gap-3">
                   <button onClick={addCar} className="flex-1 py-4 bg-[#0071E3] text-white rounded-xl font-bold shadow-lg shadow-blue-500/20">Saqlash</button>

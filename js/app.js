@@ -25,7 +25,7 @@ const App = () => {
     const updated = [newOrder, ...orders];
     setOrders(updated);
     localStorage.setItem('million_km_orders', JSON.stringify(updated));
-    showToast("Buyurtma qabul qilindi!");
+    showToast("Buyurtma muvaffaqiyatli qabul qilindi!");
     
     // Telegramga yuborish
     let tgMsg = `📦 <b>Yangi Buyurtma</b>\n👤 ${newOrder.userName}\n📞 ${newOrder.phone}\n🛠 ${newOrder.serviceType}`;
@@ -93,12 +93,21 @@ const App = () => {
                  <p className="text-[#86868b] text-sm">Shaxsiy kabinetga xush kelibsiz.</p>
               </div>
               <div className="space-y-4">
-                 <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Ismingiz" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
+                 <div>
+                   <label className="text-xs font-bold text-[#86868B] uppercase ml-1 mb-1 block">Ismingiz</label>
+                   <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Ism" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
+                 </div>
                  {loginForm.name === 'admin' ? 
-                    <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" type="password" placeholder="Parol" onChange={e => setLoginForm({...loginForm, password: e.target.value})} /> :
-                    <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Telefon" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
+                    <div>
+                      <label className="text-xs font-bold text-[#86868B] uppercase ml-1 mb-1 block">Parol</label>
+                      <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" type="password" placeholder="***" onChange={e => setLoginForm({...loginForm, password: e.target.value})} /> 
+                    </div> :
+                    <div>
+                      <label className="text-xs font-bold text-[#86868B] uppercase ml-1 mb-1 block">Telefon</label>
+                      <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="+998" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
+                    </div>
                  }
-                 <button onClick={handleLogin} className="apple-btn-primary w-full py-3.5 shadow-lg">Kirish</button>
+                 <button onClick={handleLogin} className="apple-btn-primary w-full py-3.5 shadow-lg mt-2">Kirish</button>
                  <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-2 text-[#86868b] text-sm font-medium hover:text-[#1d1d1f]">Bekor qilish</button>
               </div>
            </div>
