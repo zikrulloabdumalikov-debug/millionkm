@@ -3,10 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Million KM | Premium Avto Servis</title>
   
-  <!-- Tailwind CSS -->
+  <!-- SEO Meta Tags -->
+  <title>Million KM | Premium Avto Servis & Motor Moyi</title>
+  <meta name="description" content="O'zbekistonda birinchi raqamli premium avtoservis. Chevrolet, Kia, Li Auto uchun original moylar, 1,000,000 km kafolat va bepul diagnostika. Express xizmat mavjud." />
+  <meta name="keywords" content="motor moyi, avtoservis, moy almashtirish, chevrolet servis, kia servis, li auto servis, avto usta, mashina remonti" />
+  <meta name="author" content="Million KM Team" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://millionkm.uz/" />
+  <meta property="og:title" content="Million KM - Dvigatelingiz uchun Premium Xizmat" />
+  <meta property="og:description" content="Professional ustalar, original ehtiyot qismlar va million kilometr kafolat." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1486262715619-01b8c22971f5?q=80&w=1200&auto=format&fit=crop" />
+
+  <!-- Schema.org JSON-LD (Google uchun tushunarli ma'lumot) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AutoRepair",
+    "name": "Million KM Service",
+    "image": "https://images.unsplash.com/photo-1486262715619-01b8c22971f5",
+    "description": "Premium darajadagi avtomobilga xizmat ko'rsatish markazi.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Sayxunobod 1-o'tish yo'li, 65-uy",
+      "addressLocality": "Dang'ara",
+      "addressRegion": "Farg'ona",
+      "addressCountry": "UZ"
+    },
+    "telephone": "+998770200107",
+    "openingHours": "Mo-Su 08:00-22:00",
+    "priceRange": "$$"
+  }
+  </script>
+  
+  <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              black: '#0a0a0a',
+              dark: '#121212',
+              gray: '#1E1E1E',
+              blue: '#0066FF',
+              red: '#FF3B30',
+              gold: '#FFD700'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
   
   <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -17,25 +72,21 @@
   
   <!-- Icons & Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Custom Styles -->
   <link rel="stylesheet" href="./style.css" />
 </head>
-<body>
+<body class="bg-brand-black text-white antialiased selection:bg-brand-blue selection:text-white">
   <div id="root"></div>
 
-  <!-- 1. Ma'lumotlar va Konstantalar -->
+  <!-- Scripts Loading Order (CRITICAL) -->
   <script type="text/babel" src="./js/data.js"></script>
-
-  <!-- 2. UI Komponentlar (Tartib muhim!) -->
   <script type="text/babel" src="./js/layout.js"></script>
   <script type="text/babel" src="./js/content.js"></script>
   <script type="text/babel" src="./js/services.js"></script>
   <script type="text/babel" src="./js/booking.js"></script>
   <script type="text/babel" src="./js/dashboard.js"></script>
-
-  <!-- 3. Asosiy App -->
   <script type="text/babel" src="./js/app.js"></script>
 </body>
 </html>
