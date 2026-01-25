@@ -25,7 +25,7 @@ const App = () => {
     const updated = [newOrder, ...orders];
     setOrders(updated);
     localStorage.setItem('million_km_orders', JSON.stringify(updated));
-    showToast("Buyurtma muvaffaqiyatli qabul qilindi!");
+    showToast("Buyurtma qabul qilindi!");
     
     // Telegramga yuborish
     let tgMsg = `📦 <b>Yangi Buyurtma</b>\n👤 ${newOrder.userName}\n📞 ${newOrder.phone}\n🛠 ${newOrder.serviceType}`;
@@ -69,7 +69,7 @@ const App = () => {
     <div className="min-h-screen flex flex-col bg-[#F5F5F7]">
       <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={() => {setCurrentUser(null); localStorage.removeItem('million_km_user');}} onLoginClick={() => setIsAuthModalOpen(true)} />
       <main className="flex-grow">{renderView()}</main>
-      <footer className="py-12 bg-white border-t border-gray-100 text-center">
+      <footer className="py-10 bg-white border-t border-gray-100 text-center">
          <div className="mb-4">
             <span className="text-xl font-bold tracking-tight text-[#1d1d1f]">Million<span className="text-[#0071E3]">KM</span></span>
          </div>
@@ -87,19 +87,19 @@ const App = () => {
       {/* Auth Modal (Clean) */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
-           <div className="bg-white p-10 rounded-[32px] w-full max-w-sm shadow-2xl relative animate-scale">
-              <div className="text-center mb-8">
-                 <h2 className="text-3xl font-bold text-[#1d1d1f] mb-2 tracking-tight">Kirish</h2>
+           <div className="bg-white p-8 rounded-[24px] w-full max-w-sm shadow-2xl relative animate-fade-up">
+              <div className="text-center mb-6">
+                 <h2 className="text-2xl font-bold text-[#1d1d1f] mb-1">Kirish</h2>
                  <p className="text-[#86868b] text-sm">Shaxsiy kabinetga xush kelibsiz.</p>
               </div>
               <div className="space-y-4">
-                 <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" placeholder="Ismingiz" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
+                 <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Ismingiz" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
                  {loginForm.name === 'admin' ? 
-                    <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" type="password" placeholder="Parol" onChange={e => setLoginForm({...loginForm, password: e.target.value})} /> :
-                    <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" placeholder="Telefon" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
+                    <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" type="password" placeholder="Parol" onChange={e => setLoginForm({...loginForm, password: e.target.value})} /> :
+                    <input className="apple-input bg-[#F5F5F7] border-transparent focus:bg-white" placeholder="Telefon" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
                  }
-                 <button onClick={handleLogin} className="apple-btn w-full py-4 text-lg mt-4 shadow-lg shadow-blue-500/20">Kirish</button>
-                 <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-3 text-[#86868b] text-sm font-medium hover:text-[#1d1d1f]">Bekor qilish</button>
+                 <button onClick={handleLogin} className="apple-btn-primary w-full py-3.5 shadow-lg">Kirish</button>
+                 <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-2 text-[#86868b] text-sm font-medium hover:text-[#1d1d1f]">Bekor qilish</button>
               </div>
            </div>
         </div>
