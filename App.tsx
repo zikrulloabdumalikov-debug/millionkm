@@ -61,16 +61,16 @@ const App: React.FC = () => {
       totalPrice: orderData.totalPrice
     };
 
-    let tgMessage = `🚀 <b>Yangi Buyurtma</b>\n`;
+    let tgMessage = `🚀 <b>YANGI BUYURTMA</b>\n\n`;
     tgMessage += `👤 Mijoz: ${newOrder.userName}\n`;
     tgMessage += `📞 Tel: ${newOrder.phone}\n`;
-    tgMessage += `🚗 Transport: ${newOrder.brand} ${newOrder.model}\n`;
-    tgMessage += `🛠 Xizmat turi: ${newOrder.serviceType}\n`;
+    tgMessage += `🚗 Avto: ${newOrder.brand} ${newOrder.model}\n`;
+    tgMessage += `🛠 Xizmat: ${newOrder.serviceType}\n`;
     if (newOrder.totalPrice) {
-      tgMessage += `💰 Jami narx: ${newOrder.totalPrice.toLocaleString()} UZS\n`;
+      tgMessage += `💰 Narxi: ${newOrder.totalPrice.toLocaleString()} UZS\n`;
     }
     if (newOrder.note) {
-      tgMessage += `📝 Izoh: ${newOrder.note}`;
+      tgMessage += `\n📝 Izoh: ${newOrder.note}`;
     }
 
     await sendTelegramNotification(tgMessage);
@@ -78,7 +78,7 @@ const App: React.FC = () => {
     const updated = [newOrder, ...orders];
     setOrders(updated);
     localStorage.setItem('million_km_orders', JSON.stringify(updated));
-    showToast("Buyurtma qabul qilindi");
+    showToast("Buyurtmangiz qabul qilindi!");
   };
 
   const handleLoginSubmit = () => {
@@ -131,10 +131,10 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen selection:bg-blue-100 flex flex-col">
+    <div className="min-h-screen selection:bg-blue-100 flex flex-col bg-[#F8F9FA]">
       <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={handleLogout} onLoginClick={() => setIsAuthModalOpen(true)} />
       
-      <main className="flex-grow">
+      <main className="flex-grow pt-16 md:pt-0">
         {renderView()}
       </main>
 
@@ -155,15 +155,13 @@ const App: React.FC = () => {
       <AIConsultant />
 
       {toast && (
-        <div className={`fixed top-0 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none ${toast.isExiting ? 'animate-dynamic-exit opacity-0' : 'animate-dynamic-island'}`}>
-          <div className={`mt-4 p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl transition-all duration-700 ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-50/50 shadow-lg shadow-blue-500/20' : 'bg-white/20'}`}>
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none transition-all duration-700 ${toast.isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100 animate-spring'}`}>
+          <div className={`p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-500/20 shadow-lg' : 'bg-white/20'}`}>
               <i className={`fas ${toast.type === 'success' ? 'fa-check' : 'fa-exclamation-triangle'} text-lg`}></i>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1.5">
-                {toast.type === 'success' ? 'Tizim xabari' : 'Diqqat qiling'}
-              </span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1.5">Million KM</span>
               <span className="font-bold text-[15px] tracking-tight">{toast.message}</span>
             </div>
           </div>
@@ -171,27 +169,27 @@ const App: React.FC = () => {
       )}
 
       {isAuthModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md animate-in">
-          <div className="bg-white/90 backdrop-blur-3xl squircle p-10 w-full max-w-md shadow-2xl relative border border-white/50 animate-spring">
-            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-10 right-10 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
-            <h2 className="text-3xl font-extrabold tracking-tight mb-10">Kirish</h2>
-            <div className="space-y-6">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
+          <div className="bg-white/95 backdrop-blur-3xl rounded-[32px] p-10 w-full max-w-md shadow-2xl relative border border-white/50 animate-spring">
+            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-8 right-8 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-8">Kirish</h2>
+            <div className="space-y-5">
                <div className="space-y-2">
-                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Shaxsingiz</label>
-                 <input type="text" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="To'liq ismingiz" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">To'liq ism</label>
+                 <input type="text" value={loginForm.name} onChange={e => setLoginForm({...loginForm, name: e.target.value})} placeholder="Masalan: Azizbek" className="w-full h-14 px-6 rounded-2xl bg-gray-50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
                </div>
                {loginForm.name.toLowerCase() !== 'admin' ? (
                   <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Bog'lanish</label>
-                    <input type="tel" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Telefon raqam</label>
+                    <input type="tel" value={loginForm.phone} onChange={e => setLoginForm({...loginForm, phone: e.target.value})} placeholder="+998" className="w-full h-14 px-6 rounded-2xl bg-gray-50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
                   </div>
                ) : (
                   <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Pin kod</label>
-                    <input type="password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} placeholder="••••" className="w-full h-16 px-6 rounded-2xl bg-gray-100/50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-center tracking-[0.5em]" />
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Maxfiy kod</label>
+                    <input type="password" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} placeholder="••••" className="w-full h-14 px-6 rounded-2xl bg-gray-50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-center tracking-[0.5em]" />
                   </div>
                )}
-               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active shadow-xl shadow-gray-200 mt-4">Davom etish</button>
+               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active shadow-xl mt-4 active:scale-95 transition-all">Davom etish</button>
             </div>
           </div>
         </div>

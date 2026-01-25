@@ -65,7 +65,7 @@ const AIConsultant: React.FC = () => {
           <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-black animate-pulse"></span>
         </button>
       ) : (
-        <div className="w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] bg-white rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.25)] border border-gray-100 flex flex-col overflow-hidden animate-spring max-h-[80vh] md:max-h-[640px]">
+        <div className="w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] bg-white rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.25)] border border-gray-100 flex flex-col overflow-hidden animate-spring max-h-[85vh]">
           {/* Header */}
           <div className="p-5 md:p-6 bg-black text-white flex items-center justify-between shrink-0">
             <div className="flex items-center space-x-3 md:space-x-4">
@@ -88,137 +88,116 @@ const AIConsultant: React.FC = () => {
           {/* Chat Body */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 ios-scroll bg-gray-50/30">
             
-            {/* Step: Welcome */}
-            {(step === 'welcome' || step === 'model' || step === 'problem' || step === 'contact' || step === 'success') && (
+            {/* Step: Messages */}
+            <div className="space-y-6">
+              {/* Bot: Welcome */}
               <div className="flex justify-start animate-in fade-in slide-in-from-left-4 duration-500">
-                <div className="max-w-[85%] bg-white p-4 md:p-5 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-xs md:text-sm font-semibold text-slate-800">
-                  Assalomu alaykum! Million KM servisiga xush kelibsiz. Sizga yordam berishimiz uchun bir nechta savolga javob bering.
+                <div className="max-w-[85%] bg-white p-4 md:p-5 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-xs md:text-sm font-semibold text-slate-800 leading-relaxed">
+                  Assalomu alaykum! Million KM servisiga xush kelibsiz. Biz bilan bog'lanish uchun bir nechta savolga javob bering.
                 </div>
               </div>
-            )}
 
-            {/* Step: Model Input */}
-            {(step === 'model' || step === 'problem' || step === 'contact' || step === 'success') && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex justify-start">
+              {/* Bot: Ask Model */}
+              {(step === 'model' || step === 'problem' || step === 'contact' || step === 'success') && (
+                <div className="flex justify-start animate-in fade-in slide-in-from-left-4 duration-500">
                   <div className="max-w-[85%] bg-white p-4 md:p-5 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-xs md:text-sm font-semibold text-slate-800">
                     Mashinangiz modelini yozing (masalan: Cobalt, Kia K5):
                   </div>
                 </div>
-                {step === 'model' && (
-                  <div className="flex flex-col space-y-3">
-                    <input 
-                      autoFocus
-                      className="w-full h-12 md:h-14 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                      placeholder="Avto modeli..."
-                      value={data.model}
-                      onChange={e => setData({...data, model: e.target.value})}
-                      onKeyPress={e => e.key === 'Enter' && data.model && handleNext()}
-                    />
-                    <button 
-                      onClick={handleNext}
-                      disabled={!data.model}
-                      className="h-12 bg-black text-white rounded-xl font-bold text-[10px] uppercase tracking-widest disabled:opacity-20 transition-all active:scale-95"
-                    >
-                      Keyingi <i className="fas fa-arrow-right ml-2"></i>
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
 
-            {/* Step: Problem Input */}
-            {(step === 'problem' || step === 'contact' || step === 'success') && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex justify-start">
+              {/* User: Model Input UI */}
+              {step === 'model' && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <input 
+                    autoFocus
+                    className="w-full h-12 md:h-14 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    placeholder="Avto modeli..."
+                    value={data.model}
+                    onChange={e => setData({...data, model: e.target.value})}
+                    onKeyPress={e => e.key === 'Enter' && data.model && handleNext()}
+                  />
+                  <button onClick={handleNext} disabled={!data.model} className="w-full h-12 bg-black text-white rounded-xl font-bold text-[10px] uppercase tracking-widest disabled:opacity-20 transition-all active:scale-95">
+                    Davom etish <i className="fas fa-arrow-right ml-2"></i>
+                  </button>
+                </div>
+              )}
+
+              {/* Bot: Ask Problem */}
+              {(step === 'problem' || step === 'contact' || step === 'success') && (
+                <div className="flex justify-start animate-in fade-in slide-in-from-left-4 duration-500">
                   <div className="max-w-[85%] bg-white p-4 md:p-5 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-xs md:text-sm font-semibold text-slate-800">
                     Muammoni qisqacha tushuntiring:
                   </div>
                 </div>
-                {step === 'problem' && (
-                  <div className="flex flex-col space-y-3">
-                    <textarea 
-                      autoFocus
-                      className="w-full p-5 bg-white border border-gray-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all min-h-[100px] resize-none"
-                      placeholder="Moy kamaygan, ovoz chiqayapti..."
-                      value={data.problem}
-                      onChange={e => setData({...data, problem: e.target.value})}
-                    />
-                    <button 
-                      onClick={handleNext}
-                      disabled={!data.problem}
-                      className="h-12 bg-black text-white rounded-xl font-bold text-[10px] uppercase tracking-widest disabled:opacity-20 transition-all active:scale-95"
-                    >
-                      Davom etish <i className="fas fa-arrow-right ml-2"></i>
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
 
-            {/* Step: Contact Form */}
-            {(step === 'contact' || step === 'success') && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex justify-start">
+              {/* User: Problem Input UI */}
+              {step === 'problem' && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <textarea 
+                    autoFocus
+                    className="w-full p-5 bg-white border border-gray-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all min-h-[100px] resize-none"
+                    placeholder="Masalan: moy kamayishi, motor ovozi..."
+                    value={data.problem}
+                    onChange={e => setData({...data, problem: e.target.value})}
+                  />
+                  <button onClick={handleNext} disabled={!data.problem} className="w-full h-12 bg-black text-white rounded-xl font-bold text-[10px] uppercase tracking-widest disabled:opacity-20 transition-all active:scale-95">
+                    Keyingi <i className="fas fa-arrow-right ml-2"></i>
+                  </button>
+                </div>
+              )}
+
+              {/* Bot: Ask Contact */}
+              {(step === 'contact' || step === 'success') && (
+                <div className="flex justify-start animate-in fade-in slide-in-from-left-4 duration-500">
                   <div className="max-w-[85%] bg-white p-4 md:p-5 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm text-xs md:text-sm font-semibold text-slate-800">
                     Ajoyib! Mutaxassis bog'lanishi uchun ma'lumotlarni qoldiring:
                   </div>
                 </div>
-                {step === 'contact' && (
-                  <form onSubmit={handleSubmit} className="space-y-3 animate-in fade-in duration-700">
+              )}
+
+              {/* User: Contact Form UI */}
+              {step === 'contact' && (
+                <form onSubmit={handleSubmit} className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="grid grid-cols-1 gap-3">
                     <input required className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ismingiz" value={data.name} onChange={e => setData({...data, name: e.target.value})} />
-                    <input required type="tel" className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Telefon raqamingiz" value={data.phone} onChange={e => setData({...data, phone: e.target.value})} />
+                    <input required type="tel" className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Telefon (901234567)" value={data.phone} onChange={e => setData({...data, phone: e.target.value})} />
                     <div className="grid grid-cols-2 gap-3">
-                      <input className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Raqam (01A777AA)" value={data.carPlate} onChange={e => setData({...data, carPlate: e.target.value})} />
-                      <input type="number" className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Probeg (km)" value={data.mileage} onChange={e => setData({...data, mileage: e.target.value})} />
+                      <input className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Raqam" value={data.carPlate} onChange={e => setData({...data, carPlate: e.target.value})} />
+                      <input type="number" className="w-full h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" placeholder="Probeg" value={data.mileage} onChange={e => setData({...data, mileage: e.target.value})} />
                     </div>
-                    <button 
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full h-14 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 active:scale-95 transition-all"
-                    >
-                      {isLoading ? <i className="fas fa-circle-notch fa-spin"></i> : "Buyurtmani yuborish"}
-                    </button>
-                  </form>
-                )}
-              </div>
-            )}
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full h-14 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 active:scale-95 transition-all mt-4"
+                  >
+                    {isLoading ? <i className="fas fa-circle-notch fa-spin"></i> : "YUBORISH"}
+                  </button>
+                </form>
+              )}
 
-            {/* Step: Success */}
-            {step === 'success' && (
-              <div className="text-center py-10 space-y-4 animate-in zoom-in duration-500">
-                <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-6 shadow-inner">
-                  <i className="fas fa-check-circle"></i>
+              {/* Success State */}
+              {step === 'success' && (
+                <div className="text-center py-8 space-y-4 animate-in zoom-in duration-500">
+                  <div className="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-2xl mx-auto shadow-inner">
+                    <i className="fas fa-check"></i>
+                  </div>
+                  <h3 className="text-lg font-black tracking-tight uppercase text-slate-900">Qabul qilindi!</h3>
+                  <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+                    Mutaxassisimiz tez orada siz bilan <br /> bog'lanadi.
+                  </p>
                 </div>
-                <h3 className="text-xl font-black tracking-tight uppercase">Rahmat!</h3>
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                  Ma'lumotlaringiz qabul qilindi. <br /> Operator tez orada bog'lanadi.
-                </p>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="mt-6 px-8 py-3 bg-gray-100 text-gray-500 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all"
-                >
-                  Yopish
-                </button>
-              </div>
-            )}
-
+              )}
+            </div>
+            
+            <div ref={scrollRef} />
           </div>
 
-          {/* Footer UI */}
-          {step === 'welcome' && (
-            <div className="p-6 bg-white border-t border-gray-50 shrink-0">
-               <button 
-                onClick={handleNext}
-                className="w-full h-14 bg-black text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
-               >
-                 Xizmatga yozilish
-               </button>
-            </div>
-          )}
-
+          {/* Footer Branding */}
           <div className="p-4 bg-white border-t border-gray-50 text-center shrink-0">
-            <p className="text-[8px] font-bold text-gray-300 uppercase tracking-[0.3em]">Premium Support Experience</p>
+            <p className="text-[8px] font-bold text-gray-300 uppercase tracking-[0.3em]">Million KM Premium Intelligence</p>
           </div>
         </div>
       )}
