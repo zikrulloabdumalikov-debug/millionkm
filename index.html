@@ -8,11 +8,11 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- React & ReactDOM (CDN) -->
+  <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   
-  <!-- Babel Standalone (JSX ni brauzerda o'qish uchun) -->
+  <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
   <!-- Icons & Fonts -->
@@ -24,7 +24,18 @@
 </head>
 <body>
   <div id="root"></div>
-  <!-- Asosiy Dastur -->
-  <script type="text/babel" src="./app.js"></script>
+
+  <!-- 1. Ma'lumotlar va Konstantalar -->
+  <script type="text/babel" src="./js/data.js"></script>
+
+  <!-- 2. UI Komponentlar (Tartib muhim!) -->
+  <script type="text/babel" src="./js/layout.js"></script>
+  <script type="text/babel" src="./js/content.js"></script>
+  <script type="text/babel" src="./js/services.js"></script>
+  <script type="text/babel" src="./js/booking.js"></script>
+  <script type="text/babel" src="./js/dashboard.js"></script>
+
+  <!-- 3. Asosiy App -->
+  <script type="text/babel" src="./js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,1 @@
+// Fayl o'chirildi
