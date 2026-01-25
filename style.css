@@ -3,14 +3,16 @@
   --bg-card: #FFFFFF;
   --text-primary: #1D1D1F; /* Apple Black */
   --text-secondary: #86868B; /* Apple Gray */
-  --accent-blue: #0071E3; /* Apple Link Blue */
+  --accent-blue: #0071E3; /* Apple Blue */
   --accent-hover: #0077ED;
   --danger: #FF3B30;
   --success: #34C759;
-  --glass-nav: rgba(255, 255, 255, 0.72);
+  --warning: #FF9500;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --radius: 20px;
+  --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 body {
@@ -21,20 +23,21 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Apple-like Glass Effect */
+/* Glassmorphism Navigation */
 .glass-nav {
-  background: var(--glass-nav);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
+/* Card Styles */
 .apple-card {
   background: var(--bg-card);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid rgba(0,0,0,0.02);
 }
 
 .apple-card:hover {
@@ -42,49 +45,57 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+/* Button Styles */
 .apple-btn {
-  background-color: var(--accent-blue);
+  background-color: var(--text-primary);
   color: white;
-  border-radius: 980px; /* Pill shape */
+  border-radius: 980px;
   font-weight: 600;
   transition: all 0.2s ease;
+  padding: 14px 28px;
+  font-size: 15px;
 }
 
 .apple-btn:hover {
-  background-color: var(--accent-hover);
+  background-color: #333;
   transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.apple-btn:active {
-  transform: scale(0.98);
+.apple-btn.blue {
+  background-color: var(--accent-blue);
 }
 
+.apple-btn.blue:hover {
+  background-color: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+}
+
+/* Input Styles */
 .apple-input {
-  background: rgba(0,0,0,0.03);
-  border: 1px solid transparent;
+  background: #fff;
+  border: 1px solid #d2d2d7;
   border-radius: 12px;
   color: var(--text-primary);
-  transition: all 0.3s;
+  transition: all 0.2s;
+  font-size: 16px; /* Prevents zoom on iOS */
 }
 
 .apple-input:focus {
-  background: #fff;
   border-color: var(--accent-blue);
   box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
   outline: none;
 }
 
-/* Typography Helpers */
-.text-hero {
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
+/* Typography */
+h1, h2, h3, h4, h5 {
+  letter-spacing: -0.02em;
 }
 
-.text-sub {
-  color: var(--text-secondary);
-  font-weight: 500;
-  line-height: 1.5;
+.text-gradient {
+  background: linear-gradient(135deg, #1D1D1F 0%, #434344 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Animations */
@@ -94,18 +105,31 @@ body {
 }
 
 .animate-fade-up {
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Chat Bubble */
-.chat-bubble-user {
-  background-color: var(--accent-blue);
-  color: white;
-  border-radius: 18px 18px 0 18px;
+.animate-scale {
+  animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Chat UI */
+.chat-container {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 }
 
 .chat-bubble-bot {
-  background-color: #E9E9EB;
+  background: #F2F2F7;
   color: #000;
-  border-radius: 18px 18px 18px 0;
+  border-radius: 18px 18px 18px 4px;
+}
+
+.chat-bubble-user {
+  background: var(--accent-blue);
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
 }

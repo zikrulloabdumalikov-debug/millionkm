@@ -25,11 +25,12 @@ const App = () => {
     const updated = [newOrder, ...orders];
     setOrders(updated);
     localStorage.setItem('million_km_orders', JSON.stringify(updated));
-    showToast("Buyurtma qabul qilindi!");
+    showToast("Buyurtma muvaffaqiyatli qabul qilindi!");
     
     // Telegramga yuborish
     let tgMsg = `📦 <b>Yangi Buyurtma</b>\n👤 ${newOrder.userName}\n📞 ${newOrder.phone}\n🛠 ${newOrder.serviceType}`;
     if(newOrder.brand) tgMsg += `\n🚗 ${newOrder.brand} ${newOrder.model}`;
+    if(newOrder.totalPrice) tgMsg += `\n💰 ${newOrder.totalPrice} so'm`;
     await window.sendTelegramNotification(tgMsg);
   };
 
@@ -65,17 +66,20 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#F5F5F7]">
       <Navbar currentView={currentView} setView={setCurrentView} user={currentUser} onLogout={() => {setCurrentUser(null); localStorage.removeItem('million_km_user');}} onLoginClick={() => setIsAuthModalOpen(true)} />
       <main className="flex-grow">{renderView()}</main>
-      <footer className="py-12 bg-[#F5F5F7] text-center border-t border-gray-200">
-         <p className="text-xs text-[#86868b] font-medium">© 2025 Million KM. Barcha huquqlar himoyalangan.</p>
+      <footer className="py-12 bg-white border-t border-gray-100 text-center">
+         <div className="mb-4">
+            <span className="text-xl font-bold tracking-tight text-[#1d1d1f]">Million<span className="text-[#0071E3]">KM</span></span>
+         </div>
+         <p className="text-xs text-[#86868b] font-medium">© 2025 Premium Service. Barcha huquqlar himoyalangan.</p>
       </footer>
       <AIConsultant />
       
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] bg-white/80 backdrop-blur-xl text-[#1d1d1f] px-6 py-3 rounded-full shadow-xl border border-gray-100 font-medium animate-fade-up flex items-center gap-2">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] bg-white text-[#1d1d1f] px-6 py-3 rounded-full shadow-xl border border-gray-100 font-bold animate-fade-up flex items-center gap-2">
            <i className="fas fa-check-circle text-[#34C759]"></i> {toast.message}
         </div>
       )}
@@ -83,10 +87,10 @@ const App = () => {
       {/* Auth Modal (Clean) */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
-           <div className="bg-white p-10 rounded-[32px] w-full max-w-sm shadow-2xl relative animate-fade-up">
+           <div className="bg-white p-10 rounded-[32px] w-full max-w-sm shadow-2xl relative animate-scale">
               <div className="text-center mb-8">
-                 <h2 className="text-3xl font-bold text-[#1d1d1f] mb-2">Kirish</h2>
-                 <p className="text-[#86868b] text-sm">Tizimga kirish uchun ma'lumotlarni kiriting.</p>
+                 <h2 className="text-3xl font-bold text-[#1d1d1f] mb-2 tracking-tight">Kirish</h2>
+                 <p className="text-[#86868b] text-sm">Shaxsiy kabinetga xush kelibsiz.</p>
               </div>
               <div className="space-y-4">
                  <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" placeholder="Ismingiz" onChange={e => setLoginForm({...loginForm, name: e.target.value})} />
@@ -95,7 +99,7 @@ const App = () => {
                     <input className="w-full p-4 bg-[#F5F5F7] rounded-xl outline-none border border-transparent focus:bg-white focus:border-[#0071E3] transition-all font-medium" placeholder="Telefon" onChange={e => setLoginForm({...loginForm, phone: e.target.value})} />
                  }
                  <button onClick={handleLogin} className="apple-btn w-full py-4 text-lg mt-4 shadow-lg shadow-blue-500/20">Kirish</button>
-                 <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-3 text-[#0071E3] text-sm font-medium">Bekor qilish</button>
+                 <button onClick={() => setIsAuthModalOpen(false)} className="w-full py-3 text-[#86868b] text-sm font-medium hover:text-[#1d1d1f]">Bekor qilish</button>
               </div>
            </div>
         </div>

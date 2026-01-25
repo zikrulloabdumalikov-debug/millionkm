@@ -1,33 +1,34 @@
 // About Us
 window.AboutUs = () => {
   return (
-    <div className="py-24 bg-white">
+    <div className="py-24 bg-white border-t border-gray-100">
       <div className="max-w-[1080px] mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 items-center">
            <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-[#1d1d1f] mb-6 tracking-tight">Bizning standart. <br/>Sizning xotirjamligingiz.</h2>
-              <p className="text-lg text-[#86868b] mb-6 leading-relaxed">
-                 Million KM bu shunchaki avtoservis emas. Bu sizning avtomobilingizga bo'lgan g'amxo'rlikning eng yuqori darajasi. 
-                 Biz har bir detalga e'tibor beramiz, chunki xavfsizlik mayda narsalardan boshlanadi.
+              <span className="text-[#0071E3] font-bold uppercase tracking-widest text-xs mb-4 block">Bizning Falsafa</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-[#1d1d1f] mb-6 tracking-tight">Sifat — bu tasodif emas.</h2>
+              <p className="text-lg text-[#86868b] mb-8 leading-relaxed">
+                 Million KM bu shunchaki ustaxona emas, bu sizning avtomobilingiz uchun "shifoxona". 
+                 Biz kasallikni davolamaymiz, biz uning oldini olamiz. Har bir detalga e'tibor beramiz.
               </p>
-              <div className="space-y-4">
-                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-[#E8F2FF] flex items-center justify-center text-[#0071E3] font-bold"><i className="fas fa-check"></i></div>
-                    <span className="font-semibold text-[#1d1d1f]">100% Original ehtiyot qismlar</span>
+              
+              <div className="flex gap-4">
+                 <div className="flex-1 apple-card p-6 bg-[#F5F5F7] border-none">
+                    <div className="text-3xl font-bold text-[#1d1d1f] mb-1">25K+</div>
+                    <div className="text-xs text-[#86868b] font-bold uppercase">Mijozlar</div>
                  </div>
-                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-[#E8F2FF] flex items-center justify-center text-[#0071E3] font-bold"><i className="fas fa-check"></i></div>
-                    <span className="font-semibold text-[#1d1d1f]">Malakali muhandislar jamoasi</span>
+                 <div className="flex-1 apple-card p-6 bg-[#F5F5F7] border-none">
+                    <div className="text-3xl font-bold text-[#1d1d1f] mb-1">100%</div>
+                    <div className="text-xs text-[#86868b] font-bold uppercase">Kafolat</div>
                  </div>
               </div>
            </div>
-           <div className="relative">
-              <div className="apple-card aspect-square bg-[#F5F5F7] flex items-center justify-center">
-                 <i className="fas fa-certificate text-8xl text-[#d1d1d6]"></i>
-              </div>
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
-                 <div className="text-4xl font-bold text-[#1d1d1f]">25K+</div>
-                 <div className="text-sm text-[#86868b] font-medium">Mamnun mijozlar</div>
+           <div className="relative rounded-[32px] overflow-hidden shadow-2xl aspect-square">
+              <img src="https://images.unsplash.com/photo-1486262715619-01b8c22971f5?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div className="absolute bottom-8 left-8 text-white">
+                 <h3 className="text-2xl font-bold">Professional Jamoa</h3>
+                 <p className="opacity-80">Germaniya standartlari asosida</p>
               </div>
            </div>
         </div>
@@ -36,69 +37,80 @@ window.AboutUs = () => {
   );
 };
 
-// Benefits (Grid Style)
+// 12 Reasons (Marketing Focused)
 window.Benefits = () => {
   const benefits = [
-    { title: "Kafolat", desc: "1,000,000 km yozma kafolat.", icon: "fa-shield-halved" },
-    { title: "Tezkorlik", desc: "O'rtacha xizmat vaqti 45 daqiqa.", icon: "fa-stopwatch" },
-    { title: "Shaffoflik", desc: "Barcha jarayon sizning ko'z o'ngingizda.", icon: "fa-eye" }
+    { title: "1M KM Kafolat", desc: "Bozorda yagona yozma kafolat.", icon: "fa-shield-halved" },
+    { title: "Bepul Avtomoyka", desc: "Har servisda toza mashina.", icon: "fa-droplet" },
+    { title: "Original Mahsulot", desc: "Sertifikatlangan moylar.", icon: "fa-award" },
+    { title: "Barchasi bittada", desc: "Diagnostika va servis.", icon: "fa-screwdriver-wrench" },
+    { title: "Butun O'zbekiston", desc: "Keng servis tarmog'i.", icon: "fa-map-location-dot" },
+    { title: "Tajribali Ustalar", desc: "Malakali muhandislar.", icon: "fa-user-gear" },
+    { title: "Yillik Diagnostika", desc: "Bepul to'liq tekshiruv.", icon: "fa-clipboard-check" },
+    { title: "Express Xizmat", desc: "Vaqtni tejovchi tezlik.", icon: "fa-bolt" },
+    { title: "Online Nazorat", desc: "Shaxsiy kabinet tizimi.", icon: "fa-mobile-screen-button" },
+    { title: "Masofaviy Yordam", desc: "24/7 aloqa markazi.", icon: "fa-headset" },
+    { title: "Maxsus Sovg'a", desc: "Brend futbolkasi.", icon: "fa-shirt" },
+    { title: "Sadoqat Tizimi", desc: "Doimiy bonuslar.", icon: "fa-percent" }
   ];
 
   return (
     <div className="py-24 bg-[#F5F5F7]">
       <div className="max-w-[1080px] mx-auto px-6">
         <div className="text-center mb-16">
-           <h2 className="text-3xl md:text-4xl font-bold text-[#1d1d1f] mb-4">Afzalliklar</h2>
-           <p className="text-[#86868b] max-w-xl mx-auto">Nega minglab haydovchilar aynan bizni tanlashadi?</p>
+           <h2 className="text-3xl md:text-5xl font-bold text-[#1d1d1f] mb-6 tracking-tight">Nega aynan <span className="text-[#0071E3]">Million KM?</span></h2>
+           <p className="text-[#86868b] max-w-2xl mx-auto text-lg leading-relaxed">
+             Chunki biz shunchaki avtomobilga xizmat ko‘rsatmaymiz — sizga ishonch, kafolat va qulaylik hadya qilamiz.
+           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
            {benefits.map((b, i) => (
-             <div key={i} className="apple-card p-8 bg-white">
-                <div className="w-12 h-12 bg-[#0071E3] text-white rounded-full flex items-center justify-center text-xl mb-6 shadow-lg shadow-blue-500/30">
+             <div key={i} className="apple-card p-6 bg-white flex flex-col items-center text-center hover:scale-[1.02] transition-transform">
+                <div className="w-12 h-12 bg-blue-50 text-[#0071E3] rounded-2xl flex items-center justify-center text-xl mb-4">
                    <i className={`fas ${b.icon}`}></i>
                 </div>
-                <h3 className="text-xl font-bold text-[#1d1d1f] mb-2">{b.title}</h3>
-                <p className="text-[#86868b] text-sm leading-relaxed">{b.desc}</p>
+                <h3 className="text-base font-bold text-[#1d1d1f] mb-1">{b.title}</h3>
+                <p className="text-[#86868b] text-xs font-medium">{b.desc}</p>
              </div>
            ))}
+        </div>
+        
+        <div className="mt-16 text-center">
+           <div className="inline-block p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+              <p className="text-[#1d1d1f] font-medium italic">"Muammoni kutish — eskicha. Oldini olish — zamonaviy."</p>
+           </div>
         </div>
       </div>
     </div>
   );
 };
 
-// Locations
+// Locations (Clean Map)
 window.NearestLocations = () => {
   return (
     <div id="locations" className="py-24 bg-white">
       <div className="max-w-[1080px] mx-auto px-6">
-         <div className="apple-card overflow-hidden border border-gray-100 shadow-lg">
-            <div className="grid md:grid-cols-3">
-               <div className="p-10 md:col-span-1 bg-white relative z-10">
-                  <h3 className="text-2xl font-bold text-[#1d1d1f] mb-6">Bizning Manzil</h3>
-                  <div className="space-y-6">
-                     <div>
-                        <div className="text-xs font-bold text-[#86868b] uppercase mb-1">Farg'ona</div>
-                        <p className="font-medium text-[#1d1d1f]">Dang'ara tumani,<br/>Sayxunobod 65-uy</p>
-                     </div>
-                     <div>
-                        <div className="text-xs font-bold text-[#86868b] uppercase mb-1">Aloqa</div>
-                        <p className="font-medium text-[#1d1d1f]">+998 77 020 01 07</p>
-                     </div>
-                     <a href="tel:+998770200107" className="apple-btn w-full py-3 block text-center text-sm">
-                        Qo'ng'iroq qilish
-                     </a>
-                  </div>
-               </div>
-               <div className="md:col-span-2 h-[300px] md:h-auto bg-[#F5F5F7]">
-                  <iframe 
-                    src="https://yandex.uz/map-widget/v1/?ll=70.893061,40.546387&z=16&l=map&pt=70.893061,40.546387,pm2rdm" 
-                    width="100%" 
-                    height="100%" 
-                    frameBorder="0"
-                    className="w-full h-full grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
-                  ></iframe>
-               </div>
+         <div className="grid md:grid-cols-3 gap-8 items-center mb-12">
+            <div className="md:col-span-2">
+               <h2 className="text-4xl font-bold text-[#1d1d1f] mb-4">Bizning Manzil</h2>
+               <p className="text-[#86868b]">Markaziy filial va ofis.</p>
+            </div>
+            <div className="text-right">
+               <a href="tel:+998770200107" className="apple-btn blue inline-block">Qo'ng'iroq qilish</a>
+            </div>
+         </div>
+
+         <div className="apple-card overflow-hidden h-[400px] relative shadow-lg">
+            <iframe 
+              src="https://yandex.uz/map-widget/v1/?ll=70.893061,40.546387&z=16&l=map&pt=70.893061,40.546387,pm2rdm" 
+              width="100%" 
+              height="100%" 
+              frameBorder="0"
+              className="w-full h-full"
+            ></iframe>
+            <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg max-w-xs">
+               <div className="font-bold text-[#1d1d1f] text-sm mb-1">Farg'ona viloyati</div>
+               <div className="text-xs text-[#86868b]">Dang'ara tumani, Sayxunobod 65-uy</div>
             </div>
          </div>
       </div>
