@@ -93,7 +93,7 @@ window.Navbar = ({ currentView, setView, user, onLogout, onLoginClick }) => {
 };
 
 // Hero Section (Clean Text Only, No Image)
-window.Hero = ({ onStart }) => {
+window.Hero = ({ onStart, user }) => {
   return (
     <div className="relative pt-40 pb-32 px-6 overflow-hidden bg-[#F5F5F7] flex items-center justify-center min-h-[60vh]">
       <div className="max-w-[960px] mx-auto text-center relative z-10">
@@ -115,8 +115,14 @@ window.Hero = ({ onStart }) => {
            </p>
 
            <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-             <button onClick={onStart} className="apple-btn-primary px-10 py-4 text-base shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto">
-                Hozir boshlash
+             <button onClick={onStart} className="apple-btn-primary px-10 py-4 text-base shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto flex items-center justify-center gap-2">
+                {user ? (
+                  <>
+                    <i className="fas fa-user-check"></i> Kabinetga o'tish
+                  </>
+                ) : (
+                  "Hozir boshlash"
+                )}
              </button>
              <button 
                onClick={() => {

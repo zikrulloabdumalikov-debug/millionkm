@@ -1,22 +1,26 @@
 // Ma'lumotlar bazasi
 window.CAR_DATA = {
+  "liauto": {
+    "Li L6": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Premium krossover. Dvigatel va reductor uchun maxsus yondashuv." },
+    "Li L7": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Li L7 gibrid tizimi uchun original sintetik moylar." },
+    "Li L8": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Oilaviy Li L8 uchun mukammal himoya va servis." },
+    "Li L9": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "reductorPrice": 949000, "desc": "Flagman Li L9. Eng yuqori sifat standarti." }
+  },
+  "kia": {
+    "Sonet": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1049000, "desc": "Yangi Sonet krossoveri uchun original KIA standartlari." },
+    "K5": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1399000, "desc": "Elegant K5 uchun yuqori sifatli texnik ko'rik." },
+    "Sportage": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1299000, "desc": "Sportage yo'ltanlamasi uchun ishonchli million km kafolati." }
+  },
   "chevrolet": {
     "Nexia 3": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Ishonchli va tejamkor Nexia 3 uchun original xizmat." },
     "Cobalt": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Oila avtomobili Cobalt uchun uzoq muddatli kafolat." },
     "Gentra": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Komfortli Gentra uchun premium xizmat paketi." },
     "Onix": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1049000, "desc": "Zamonaviy Onix turbo motorlari uchun maxsus moylar." },
     "Tracker": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1049000, "desc": "Krossover Tracker uchun ishonchli texnik nazorat." },
-    "Malibu": { "maxAge": 5, "maxKm": 50000, "priceOneTime": 1299000, "desc": "Biznes klass Malibu uchun oliy darajadagi xizmat." }
-  },
-  "kia": {
-    "Sonet": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 990000, "desc": "Yangi Sonet krossoveri uchun original KIA standartlari." },
-    "K5": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1350000, "desc": "Elegant K5 uchun yuqori sifatli texnik ko'rik." },
-    "Sportage": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1550000, "desc": "Sportage yo'ltanlamasi uchun ishonchli million km kafolati." }
-  },
-  "liauto": {
-    "L6": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1800000, "desc": "Premium Li Auto L6 uchun maxsus xizmat turi." },
-    "L7": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1900000, "desc": "Li L7 gibrid tizimlari uchun professional yondashuv." },
-    "L9": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 2100000, "desc": "Flagman Li L9 uchun eng oliy darajadagi Million KM xizmati." }
+    "Malibu": { "maxAge": 5, "maxKm": 50000, "priceOneTime": 1299000, "desc": "Biznes klass Malibu uchun oliy darajadagi xizmat." },
+    "Equinox": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1499000, "desc": "Equinox uchun maxsus sintetik moylar va filtrlar." },
+    "Traverse": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 1899000, "desc": "Katta oilaviy Traverse uchun kuchaytirilgan himoya." },
+    "Tahoe": { "maxAge": 3, "maxKm": 50000, "priceOneTime": 2199000, "desc": "Gigant Tahoe dvigateli uchun eng yuqori sifat standarti." }
   }
 };
 
@@ -51,14 +55,15 @@ window.sendTelegramNotification = async (message) => {
 
 window.sendLeadToTelegram = async (data) => {
   const message = `
-<b>🚨 YANGI AI MUROJAAT (LEAD)</b>
+🤖 <b>YANGI LEAD (AI CHAT)</b>
 
-<b>👤 Mijoz:</b> ${data.name}
-<b>📞 Tel:</b> ${data.phone}
-<b>🚗 Avto:</b> ${data.model}
-<b>🔢 Davlat raqami:</b> <code>${data.carPlate}</code>
-<b>📊 Probeg:</b> ${data.mileage} KM
-<b>🛠 Muammo tavsifi:</b> 
+👤 <b>Mijoz:</b> ${data.name}
+📞 <b>Telefon:</b> <code>${data.phone}</code>
+🚗 <b>Avto:</b> ${data.model}
+🔢 <b>Davlat raqami:</b> ${data.carPlate || 'Kiritilmadi'}
+📊 <b>Probeg:</b> ${data.mileage ? data.mileage + ' km' : 'Kiritilmadi'}
+
+🛠 <b>Muammo tavsifi:</b> 
 <i>"${data.problem}"</i>
   `;
   return await window.sendTelegramNotification(message);

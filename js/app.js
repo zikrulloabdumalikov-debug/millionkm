@@ -1,3 +1,4 @@
+
 const App = () => {
   const { Navbar, Hero, AboutUs, Benefits, NearestLocations, QuickServices, MobileService, StatusChecker, BrandGrid, Cabinet, Admin, AIConsultant } = window;
   
@@ -21,16 +22,50 @@ const App = () => {
   };
 
   const addOrder = async (orderData) => {
-    const newOrder = { ...orderData, id: Date.now(), timestamp: new Date().toLocaleString(), userName: currentUser?.name || orderData.userName || 'Mehmon' };
+    const newOrder = { 
+        ...orderData, 
+        id: Date.now(), 
+        timestamp: new Date().toLocaleString(), 
+        userName: currentUser?.name || orderData.userName || 'Mehmon',
+        phone: currentUser?.phone || orderData.phone || '' 
+    };
+    
     const updated = [newOrder, ...orders];
     setOrders(updated);
     localStorage.setItem('million_km_orders', JSON.stringify(updated));
     showToast("Buyurtma muvaffaqiyatli qabul qilindi!");
     
-    // Telegramga yuborish
-    let tgMsg = `📦 <b>Yangi Buyurtma</b>\n👤 ${newOrder.userName}\n📞 ${newOrder.phone}\n🛠 ${newOrder.serviceType}`;
-    if(newOrder.brand) tgMsg += `\n🚗 ${newOrder.brand} ${newOrder.model}`;
-    if(newOrder.totalPrice) tgMsg += `\n💰 ${newOrder.totalPrice} so'm`;
+    // --- TELEGRAM XABAR FORMATLASH ---
+    let tgMsg = "";
+
+    if (orderData.isGarageRequest) {
+        // GARAJ (SMART REQUEST) FORMATI
+        const kmDiff = orderData.currentKm - orderData.lastServiceKm;
+        const daysAgo = orderData.dailyKm > 0 ? Math.floor(kmDiff / orderData.dailyKm) : "Noma'lum";
+
+        tgMsg = `🚘 <b>SERVISGA YOZILISH (GARAJ)</b>\n\n`;
+        tgMsg += `👤 <b>Mijoz:</b> ${newOrder.userName}\n`;
+        tgMsg += `📞 <b>Telefon:</b> <code>${newOrder.phone}</code>\n\n`;
+        tgMsg += `🚙 <b>Avtomobil:</b> ${newOrder.brand} ${newOrder.model} (${orderData.carYear}-yil)\n`;
+        tgMsg += `📟 <b>Hozirgi probeg:</b> ${orderData.currentKm?.toLocaleString()} km\n`;
+        tgMsg += `🛠 <b>Oxirgi servis:</b> ${orderData.lastServiceKm?.toLocaleString()} km\n`;
+        tgMsg += `📉 <b>Yurilgan masofa:</b> ${kmDiff?.toLocaleString()} km\n`;
+        tgMsg += `📅 <b>Vaqt oralig'i:</b> ~${daysAgo} kun oldin\n\n`;
+        tgMsg += `📝 <b>Xizmat turi:</b> ${newOrder.serviceType}`;
+    } else {
+        // STANDART BUYURTMA FORMATI
+        tgMsg = `📦 <b>YANGI BUYURTMA</b>\n\n`;
+        tgMsg += `👤 <b>Mijoz:</b> ${newOrder.userName}\n`;
+        tgMsg += `📞 <b>Telefon:</b> <code>${newOrder.phone}</code>\n`;
+        tgMsg += `🛠 <b>Xizmat:</b> ${newOrder.serviceType}\n`;
+        
+        if(newOrder.brand) tgMsg += `🚗 <b>Avto:</b> ${newOrder.brand} ${newOrder.model}\n`;
+        if(newOrder.tariffType) tgMsg += `📋 <b>Tarif:</b> ${newOrder.tariffType === 'yearly' ? 'Yillik Obuna' : 'Bir Martalik'}\n`;
+        if(newOrder.servicesCount) tgMsg += `🔢 <b>Soni:</b> ${newOrder.servicesCount} marta\n`;
+        if(newOrder.totalPrice) tgMsg += `💰 <b>Jami Narx:</b> ${newOrder.totalPrice.toLocaleString()} UZS\n`;
+        if(newOrder.note) tgMsg += `\n📝 <b>Izoh:</b> ${newOrder.note}`;
+    }
+
     await window.sendTelegramNotification(tgMsg);
   };
 
@@ -47,14 +82,23 @@ const App = () => {
 
   const renderView = () => {
     switch (currentView) {
-      case 'cabinet': return currentUser ? <Cabinet user={currentUser} showToast={showToast} onOrder={addOrder} /> : <Hero onStart={() => setIsAuthModalOpen(true)} />;
+      case 'cabinet': return currentUser ? <Cabinet user={currentUser} showToast={showToast} onOrder={addOrder} /> : <Hero user={currentUser} onStart={() => setIsAuthModalOpen(true)} />;
       case 'admin': return currentUser?.isAdmin ? <Admin orders={orders} /> : <div className="p-20 text-center font-bold text-red-500">Ruxsat yo'q</div>;
       case 'express':
       case 'fuel': return <MobileService type={currentView} user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />;
       case 'about': return <AboutUs />;
       default: return (
         <div>
-          <Hero onStart={() => setIsAuthModalOpen(true)} />
+          <Hero 
+            user={currentUser} 
+            onStart={() => {
+              if (currentUser) {
+                setCurrentView('cabinet');
+              } else {
+                setIsAuthModalOpen(true);
+              }
+            }} 
+          />
           <BrandGrid user={currentUser} onOrder={addOrder} onOpenAuth={() => setIsAuthModalOpen(true)} />
           <Benefits />
           <StatusChecker showToast={showToast} onRegister={() => setIsAuthModalOpen(true)} onOneTime={() => setCurrentView('express')} />

@@ -79,13 +79,21 @@ window.Cabinet = ({ user, showToast, onOrder }) => {
     showToast("Probeg yangilandi!");
   };
 
-  // Xizmatga yozilish
+  // Xizmatga yozilish (YANGILANGAN: To'liq ma'lumot uzatish)
   const requestService = (car, type) => {
     onOrder({
       brand: car.brand,
       model: car.model,
       serviceType: type,
-      note: `Garajdan so'rov. Probeg: ${formatNum(car.currentKm)} km. Oxirgi servis: ${formatNum(car.lastServiceKm)} km.`
+      
+      // Maxsus maydonlar (Telegram uchun)
+      isGarageRequest: true,
+      carYear: car.year,
+      currentKm: car.currentKm,
+      lastServiceKm: car.lastServiceKm,
+      dailyKm: car.dailyKm,
+      
+      note: "Garaj bo'limidan avtomatik so'rov."
     });
   };
 
@@ -285,104 +293,6 @@ window.Cabinet = ({ user, showToast, onOrder }) => {
             </div>
          </div>
       )}
-    </div>
-  );
-};
-
-// Admin (Simplified)
-window.Admin = ({ orders }) => (
-   <div className="py-24 px-6 max-w-[1080px] mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-[#1d1d1f]">Admin Dashboard</h1>
-      <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
-         <table className="w-full text-left">
-            <thead className="bg-[#F5F5F7] text-xs uppercase font-bold text-[#86868b]"><tr><th className="p-5">Mijoz</th><th className="p-5">Mashina</th><th className="p-5">Xizmat</th></tr></thead>
-            <tbody>
-               {orders.map(o => (
-                  <tr key={o.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                     <td className="p-5 font-bold text-[#1d1d1f]">{o.userName}<br/><span className="text-xs text-[#86868b] font-normal">{o.phone}</span></td>
-                     <td className="p-5 text-sm font-medium">{o.brand} {o.model}</td>
-                     <td className="p-5"><span className="bg-blue-50 text-[#0071E3] px-3 py-1 rounded-lg text-xs font-bold">{o.serviceType}</span></td>
-                  </tr>
-               ))}
-            </tbody>
-         </table>
-      </div>
-   </div>
-);
-
-// Smart Chat (Lead Gen Bot)
-window.AIConsultant = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [step, setStep] = React.useState(0); // 0: Start, 1: Name, 2: Car, 3: Problem, 4: End
-  const [messages, setMessages] = React.useState([{text: "Assalomu alaykum! Mashinangizda qanday muammo bor?", isBot: true}]);
-  const [input, setInput] = React.useState('');
-  const [userData, setUserData] = React.useState({});
-
-  const handleSend = () => {
-     if(!input.trim()) return;
-     
-     const newMsgs = [...messages, {text: input, isBot: false}];
-     setMessages(newMsgs);
-     const currentInput = input;
-     setInput('');
-
-     // Smart Flow Logic
-     setTimeout(() => {
-        let botReply = "";
-        let nextStep = step;
-
-        if (step === 0) {
-           botReply = "Tushunarli. Ismingiz nima?";
-           setUserData({...userData, problem: currentInput});
-           nextStep = 1;
-        } else if (step === 1) {
-           botReply = "Juda soz. Mashinangiz modeli va yilini yozing?";
-           setUserData({...userData, name: currentInput});
-           nextStep = 2;
-        } else if (step === 2) {
-           botReply = "Qabul qilindi. Telefon raqamingizni qoldiring, mutaxassisimiz 5 daqiqada bog'lanadi.";
-           setUserData({...userData, car: currentInput});
-           nextStep = 3;
-        } else if (step === 3) {
-           botReply = "Rahmat! So'rovingiz yuborildi. Tez orada aloqaga chiqamiz.";
-           window.sendTelegramNotification(`🚨 <b>CHAT LEAD</b>\n👤 ${userData.name}\n🚗 ${userData.car}\n🛠 ${userData.problem}\n📞 ${currentInput}`);
-           nextStep = 4;
-        }
-
-        setStep(nextStep);
-        setMessages([...newMsgs, {text: botReply, isBot: true}]);
-     }, 800);
-  };
-
-  return (
-    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
-       {isOpen && (
-          <div className="mb-4 w-[340px] h-[450px] bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-gray-100 flex flex-col overflow-hidden animate-scale">
-             <div className="bg-[#1d1d1f] p-4 flex justify-between items-center text-white">
-                <div className="flex items-center gap-2">
-                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                   <div className="font-bold text-sm">Million KM Assistant</div>
-                </div>
-                <button onClick={() => setIsOpen(false)} className="opacity-70 hover:opacity-100"><i className="fas fa-times"></i></button>
-             </div>
-             <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#F5F5F7]">
-                {messages.map((m, i) => (
-                   <div key={i} className={`flex ${m.isBot ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[85%] px-4 py-2.5 text-[14px] leading-snug font-medium shadow-sm ${m.isBot ? 'bg-white text-[#1d1d1f] rounded-tl-none rounded-2xl' : 'bg-[#0071E3] text-white rounded-tr-none rounded-2xl'}`}>{m.text}</div>
-                   </div>
-                ))}
-             </div>
-             {step < 4 && (
-                <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
-                   <input className="flex-1 bg-[#F5F5F7] text-[#1d1d1f] rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#0071E3]/20 transition-all" placeholder="Javob yozing..." value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} />
-                   <button onClick={handleSend} className="w-10 h-10 bg-[#0071E3] text-white rounded-full flex items-center justify-center hover:bg-[#0077ED] transition-colors"><i className="fas fa-arrow-up text-sm"></i></button>
-                </div>
-             )}
-          </div>
-       )}
-       <button onClick={() => setIsOpen(!isOpen)} className="w-14 h-14 rounded-full bg-[#1d1d1f] text-white text-xl shadow-xl flex items-center justify-center hover:scale-105 transition-transform hover:bg-[#0071E3]">
-          {isOpen ? <i className="fas fa-times"></i> : <i className="fas fa-comment-dots"></i>}
-       </button>
     </div>
   );
 };
