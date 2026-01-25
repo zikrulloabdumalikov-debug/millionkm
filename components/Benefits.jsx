@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-const Benefits: React.FC = () => {
+const Benefits = () => {
   const benefitList = [
     {
       title: "1. Million kilometrgacha kafolat — bozorda yagona!",

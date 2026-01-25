@@ -1,7 +1,4 @@
-
-import { BrandData } from './types';
-
-export const CAR_DATA: Record<string, BrandData> = {
+export const CAR_DATA = {
   "chevrolet": {
     "Nexia 3": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Ishonchli va tejamkor Nexia 3 uchun original xizmat." },
     "Cobalt": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Oila avtomobili Cobalt uchun uzoq muddatli kafolat." },

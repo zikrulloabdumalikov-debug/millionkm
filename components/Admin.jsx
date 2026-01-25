@@ -1,12 +1,6 @@
-
 import React from 'react';
-import { Order } from '../types';
 
-interface AdminProps {
-  orders: Order[];
-}
-
-const Admin: React.FC<AdminProps> = ({ orders }) => {
+const Admin = ({ orders }) => {
   const uniqueClients = new Set(orders.map(o => o.phone)).size;
   const totalOrders = orders.length;
   

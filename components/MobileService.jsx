@@ -1,18 +1,9 @@
-
 import React, { useState } from 'react';
-import { User, Order } from '../types';
 
-interface MobileServiceProps {
-  type: 'express' | 'fuel';
-  user: User | null;
-  onOrder: (order: Partial<Order>) => void;
-  onOpenAuth: () => void;
-}
-
-const MobileService: React.FC<MobileServiceProps> = ({ type, user, onOrder, onOpenAuth }) => {
+const MobileService = ({ type, user, onOrder, onOpenAuth }) => {
   const [formData, setFormData] = useState({ name: user?.name || '', phone: user?.phone || '', location: '', note: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!user) {
       onOpenAuth();

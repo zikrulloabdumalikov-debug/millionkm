@@ -1,28 +1,20 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { CAR_DATA } from '../constants';
-import { User, Order } from '../types';
 
-interface BrandGridProps {
-  user: User | null;
-  onOrder: (order: Partial<Order>) => void;
-  onOpenAuth: () => void;
-}
-
-const BRAND_LOGOS: Record<string, string> = {
+const BRAND_LOGOS = {
   "chevrolet": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/1200px-Chevrolet-logo.png",
   "kia": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Kia_logo.svg/2560px-Kia_logo.svg.png",
   "liauto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Li_Auto_logo.png/1200px-Li_Auto_logo.png"
 };
 
-const BrandGrid: React.FC<BrandGridProps> = ({ user, onOrder, onOpenAuth }) => {
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  const [tariffType, setTariffType] = useState<'one-time' | 'yearly' | null>(null);
+const BrandGrid = ({ user, onOrder, onOpenAuth }) => {
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [tariffType, setTariffType] = useState(null);
   const [yearlyCount, setYearlyCount] = useState(3);
   
-  const modelsRef = useRef<HTMLDivElement>(null);
-  const checkoutRef = useRef<HTMLDivElement>(null);
+  const modelsRef = useRef(null);
+  const checkoutRef = useRef(null);
 
   useEffect(() => {
     if (selectedBrand && modelsRef.current) {
@@ -36,12 +28,12 @@ const BrandGrid: React.FC<BrandGridProps> = ({ user, onOrder, onOpenAuth }) => {
     }
   }, [selectedModel]);
 
-  const handleModelSelect = (model: string) => {
+  const handleModelSelect = (model) => {
     setSelectedModel(model);
     setTariffType(null);
   };
 
-  const calculateYearlyPrice = (basePrice: number, count: number) => {
+  const calculateYearlyPrice = (basePrice, count) => {
     return basePrice * count;
   };
 

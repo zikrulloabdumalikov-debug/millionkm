@@ -1,12 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { sendLeadToTelegram } from '../services/telegramService';
 
-type ChatStep = 'welcome' | 'model' | 'problem' | 'contact' | 'success';
-
-const AIConsultant: React.FC = () => {
+const AIConsultant = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState<ChatStep>('welcome');
+  const [step, setStep] = useState('welcome');
   const [isLoading, setIsLoading] = useState(false);
   
   const [data, setData] = useState({
@@ -18,7 +15,7 @@ const AIConsultant: React.FC = () => {
     mileage: ''
   });
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -32,7 +29,7 @@ const AIConsultant: React.FC = () => {
     else if (step === 'problem' && data.problem) setStep('contact');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!data.name || !data.phone) return;
     

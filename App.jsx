@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Order } from './types';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import StatusChecker from './components/StatusChecker';
@@ -15,25 +13,16 @@ import Benefits from './components/Benefits';
 import QuickServices from './components/QuickServices';
 import { sendTelegramNotification } from './services/telegramService';
 
-type ToastType = 'success' | 'error';
-interface ToastState {
-  message: string;
-  type: ToastType;
-  isExiting: boolean;
-}
-
-type View = 'home' | 'cabinet' | 'admin' | 'express' | 'fuel' | 'about' | 'locations';
-
-const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>('home');
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+const App = () => {
+  const [currentView, setCurrentView] = useState('home');
+  const [currentUser, setCurrentUser] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [toast, setToast] = useState<ToastState | null>(null);
+  const [orders, setOrders] = useState([]);
+  const [toast, setToast] = useState(null);
 
   const [loginForm, setLoginForm] = useState({ name: '', phone: '', password: '' });
 
-  const showToast = useCallback((message: string, type: ToastType = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type, isExiting: false });
     setTimeout(() => setToast(prev => prev ? { ...prev, isExiting: true } : null), 3500);
     setTimeout(() => setToast(null), 4000);
@@ -46,8 +35,8 @@ const App: React.FC = () => {
     if (savedOrders) setOrders(JSON.parse(savedOrders));
   }, []);
 
-  const addOrder = async (orderData: Partial<Order>) => {
-    const newOrder: Order = {
+  const addOrder = async (orderData) => {
+    const newOrder = {
       id: Math.random().toString(36).substr(2, 9),
       userName: orderData.userName || currentUser?.name || 'Mehmon',
       brand: orderData.brand || 'Nomaʼlum',
@@ -83,7 +72,7 @@ const App: React.FC = () => {
 
   const handleLoginSubmit = () => {
     if (loginForm.name.toLowerCase() === 'admin' && loginForm.password === '123') {
-      const adminUser: User = { uid: 'a1', name: 'Admin', email: '', phone: '', gender: '', isAdmin: true };
+      const adminUser = { uid: 'a1', name: 'Admin', email: '', phone: '', gender: '', isAdmin: true };
       setCurrentUser(adminUser);
       localStorage.setItem('million_km_user', JSON.stringify(adminUser));
       setIsAuthModalOpen(false);
@@ -96,7 +85,7 @@ const App: React.FC = () => {
       return;
     }
 
-    const user: User = { uid: 'u-' + Date.now(), name: loginForm.name, email: '', phone: loginForm.phone, gender: '', isAdmin: false };
+    const user = { uid: 'u-' + Date.now(), name: loginForm.name, email: '', phone: loginForm.phone, gender: '', isAdmin: false };
     setCurrentUser(user);
     localStorage.setItem('million_km_user', JSON.stringify(user));
     setIsAuthModalOpen(false);

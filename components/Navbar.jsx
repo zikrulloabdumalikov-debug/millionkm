@@ -1,16 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { User } from '../types';
 
-interface NavbarProps {
-  currentView: string;
-  setView: (view: any) => void;
-  user: User | null;
-  onLogout: () => void;
-  onLoginClick: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ currentView, setView, user, onLogout, onLoginClick }) => {
+const Navbar = ({ currentView, setView, user, onLogout, onLoginClick }) => {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -20,7 +10,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView, user, onLogout, o
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNav = (view: any, hash: string = '') => {
+  const handleNav = (view, hash = '') => {
     setView(view);
     setIsMobileMenuOpen(false);
     if (hash) {

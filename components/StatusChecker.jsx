@@ -1,27 +1,13 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { CAR_DATA } from '../constants';
 
-interface StatusCheckerProps {
-  showToast: (msg: string, type: any) => void;
-  onRegister: () => void;
-  onOneTime: (brand: string, model: string) => void;
-}
-
-const IOSDropdown: React.FC<{
-  label: string;
-  options: string[];
-  value: string;
-  onChange: (val: string) => void;
-  disabled?: boolean;
-  placeholder: string;
-}> = ({ label, options, value, onChange, disabled, placeholder }) => {
+const IOSDropdown = ({ label, options, value, onChange, disabled, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setIsOpen(false);
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false);
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
@@ -59,12 +45,12 @@ const IOSDropdown: React.FC<{
   );
 };
 
-const StatusChecker: React.FC<StatusCheckerProps> = ({ showToast, onRegister, onOneTime }) => {
+const StatusChecker = ({ showToast, onRegister, onOneTime }) => {
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [year, setYear] = useState('');
   const [km, setKm] = useState('');
-  const [result, setResult] = useState<{ status: 'eligible' | 'not_eligible' | null; message: string }>({ status: null, message: '' });
+  const [result, setResult] = useState({ status: null, message: '' });
 
   const handleCheck = () => {
     if (!brand || !model || !year || !km) {

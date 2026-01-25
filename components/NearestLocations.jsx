@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-const NearestLocations: React.FC = () => {
+const NearestLocations = () => {
   return (
     <div id="locations" className="max-w-7xl mx-auto px-6 py-20">
       <div className="text-center mb-16">

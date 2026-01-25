@@ -1,11 +1,6 @@
-
 import React from 'react';
 
-interface HeroProps {
-  onStart: () => void;
-}
-
-const Hero: React.FC<HeroProps> = ({ onStart }) => {
+const Hero = ({ onStart }) => {
   return (
     <div className="relative pt-24 pb-16 md:pt-60 md:pb-48 overflow-hidden px-4">
       <div className="max-w-7xl mx-auto px-2 md:px-8 relative z-10">

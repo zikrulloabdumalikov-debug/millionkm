@@ -1,15 +1,7 @@
-
 import React, { useState } from 'react';
-import { User, Car, Order } from '../types';
 
-interface CabinetProps {
-  user: User;
-  showToast: (msg: string, type: any) => void;
-  onOrder: (order: Partial<Order>) => void;
-}
-
-const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
-  const [cars, setCars] = useState<Car[]>([
+const Cabinet = ({ user, showToast, onOrder }) => {
+  const [cars, setCars] = useState([
     { 
       id: 'c1', 
       userUid: user.uid, 
@@ -27,7 +19,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
   const [displayLastOil, setDisplayLastOil] = useState('');
   const [displayDaily, setDisplayDaily] = useState('');
 
-  const formatWithSpaces = (val: string) => {
+  const formatWithSpaces = (val) => {
     const raw = val.replace(/\D/g, '');
     return raw.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
@@ -37,7 +29,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
       showToast("Iltimos, barcha maydonlarni to'ldiring", 'error');
       return;
     }
-    const car: Car = {
+    const car = {
       id: Math.random().toString(36).substr(2, 9),
       userUid: user.uid,
       brand: newCar.brand,
@@ -55,7 +47,7 @@ const Cabinet: React.FC<CabinetProps> = ({ user, showToast, onOrder }) => {
     showToast("Mashina garajga qo'shildi!", 'success');
   };
 
-  const requestService = (car: Car) => {
+  const requestService = (car) => {
     onOrder({
       brand: car.brand,
       model: car.model,

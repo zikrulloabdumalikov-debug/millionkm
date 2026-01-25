@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-const AboutUs: React.FC = () => {
+const AboutUs = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 animate-fade-up">
       <div className="text-center mb-24 md:mb-32">

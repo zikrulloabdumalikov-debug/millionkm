@@ -1,11 +1,6 @@
-
 import React from 'react';
 
-interface QuickServicesProps {
-  onSelect: (type: 'express' | 'fuel') => void;
-}
-
-const QuickServices: React.FC<QuickServicesProps> = ({ onSelect }) => {
+const QuickServices = ({ onSelect }) => {
   return (
     <div className="py-10 px-4">
       <div className="mb-12 md:mb-20">
