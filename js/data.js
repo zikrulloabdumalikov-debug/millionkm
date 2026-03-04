@@ -30,9 +30,10 @@ export const BRAND_LOGOS = {
 };
 
 export const sendTelegramNotification = async (message) => {
-  const TG_TOKEN = "7722483735:AAG_LZ1Bg0H-mnqAlnw4OknNj-BTrqM8CWM";
-const TG_CHAT_ID = "-1003461463026";
-const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
+    const TG_TOKEN = "7722483735:AAG_LZ1Bg0H-mnqAlnw4OknNj-BTrqM8CWM";
+    const TG_CHAT_ID = "-1003461463026";
+    const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
+    try {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
