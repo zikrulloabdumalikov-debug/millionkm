@@ -1,6 +1,4 @@
-
-// Ma'lumotlar bazasi
-window.CAR_DATA = {
+export const CAR_DATA = {
   "chevrolet": {
     "Nexia 3": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Ishonchli va tejamkor Nexia 3 uchun original xizmat." },
     "Cobalt": { "maxAge": 5, "maxKm": 100000, "priceOneTime": 849000, "desc": "Oila avtomobili Cobalt uchun uzoq muddatli kafolat." },
@@ -25,18 +23,20 @@ window.CAR_DATA = {
   }
 };
 
-// Telegram Sozlamalari
-const TG_TOKEN = "7722483735:AAG_LZ1Bg0H-mnqAlnw4OknNj-BTrqM8CWM";
-const TG_CHAT_ID = "-1003461463026";
+export const BRAND_LOGOS = {
+  "chevrolet": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/1200px-Chevrolet-logo.png",
+  "kia": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Kia_logo.svg/2560px-Kia_logo.svg.png",
+  "liauto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Li_Auto_logo.png/1200px-Li_Auto_logo.png"
+};
 
-window.sendTelegramNotification = async (message) => {
-  const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
+export const sendTelegramNotification = async (message) => {
+  const url = `https://api.telegram.org/bot${window.TG_TOKEN}/sendMessage`;
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: TG_CHAT_ID,
+        chat_id: window.TG_CHAT_ID,
         text: message,
         parse_mode: 'HTML'
       })
@@ -48,7 +48,7 @@ window.sendTelegramNotification = async (message) => {
   }
 };
 
-window.sendLeadToTelegram = async (data) => {
+export const sendLeadToTelegram = async (data) => {
   const message = `
 🤖 <b>YANGI LEAD (AI CHAT)</b>
 
@@ -61,5 +61,5 @@ window.sendLeadToTelegram = async (data) => {
 🛠 <b>Muammo tavsifi:</b> 
 <i>"${data.problem}"</i>
   `;
-  return await window.sendTelegramNotification(message);
+  return await sendTelegramNotification(message);
 };

@@ -1,4 +1,5 @@
 {
   "name": "Million KM Premium Auto Service",
-  "description": "A modern React-based platform for managing car maintenance, eligibility checks for engine warranties, and booking mobile services."
+  "description": "A modern React-based platform for managing car maintenance, eligibility checks for engine warranties, and booking mobile services.",
+  "requestFramePermissions": []
 }

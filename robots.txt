@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cabinet
+
+Sitemap: https://millionkm.uz/sitemap.xml
