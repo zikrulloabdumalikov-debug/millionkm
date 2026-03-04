@@ -55,12 +55,10 @@ const App = () => {
   // Scroll handling
   React.useEffect(() => {
     if (currentView === 'home') {
-      // Restore scroll position when returning to home
       setTimeout(() => {
         window.scrollTo({ top: scrollYRef.current, behavior: 'auto' });
       }, 0);
     } else {
-      // Scroll to top for other views
       window.scrollTo(0, 0);
     }
   }, [currentView]);
@@ -76,15 +74,20 @@ const App = () => {
     setCurrentView('home');
   };
 
-  // Initial Auth Verification
+  // Initial Auth Verification — avval anonymous auth, keyin Firestore
   React.useEffect(() => {
     const saved = localStorage.getItem('million_km_user');
-    if (saved) {
-      const localUser = JSON.parse(saved);
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('uid', '==', localUser.uid));
-      
-      getDocs(q).then(snap => {
+    if (!saved) return;
+
+    const localUser = JSON.parse(saved);
+
+    signInAnonymously(auth)
+      .then(() => {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('uid', '==', localUser.uid));
+        return getDocs(q);
+      })
+      .then(snap => {
         if (!snap.empty) {
           const data = snap.docs[0].data();
           setCurrentUser({
@@ -96,12 +99,18 @@ const App = () => {
         } else {
           localStorage.removeItem('million_km_user');
         }
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error("Auth verification error:", err);
-        showToast("Sessiya xatosi", "error");
+        // Xato bo'lsa localStorage dan yukla, toast chiqarma
+        setCurrentUser({
+          uid: localUser.uid,
+          name: localUser.name,
+          phone: localUser.phone,
+          isAdmin: false
+        });
       });
-    }
-  }, [showToast]);
+  }, []);
 
   // Real-time Orders for Admin
   React.useEffect(() => {
@@ -171,8 +180,12 @@ const App = () => {
     }
 
     try {
+      // Avval anonymous auth
+      if (!auth.currentUser) {
+        await signInAnonymously(auth);
+      }
+
       const usersRef = collection(db, 'users');
-      // Note: We search for non-admin users first, or just by phone.
       const phoneQuery = query(usersRef, where('phone', '==', loginForm.phone));
       const snapshot = await getDocs(phoneQuery);
 
@@ -190,11 +203,6 @@ const App = () => {
         };
         await addDoc(usersRef, newUser);
         userData = newUser;
-      }
-
-      // Firebase Anonymous Auth
-      if (!auth.currentUser) {
-        await signInAnonymously(auth);
       }
 
       const user = {
@@ -343,7 +351,7 @@ const App = () => {
               <button onClick={() => setCurrentView('home')} className="hover:text-slate-900 transition-colors">Bosh sahifa</button>
               <button onClick={() => setCurrentView('about')} className="hover:text-slate-900 transition-colors">Biz haqimizda</button>
             </div>
-            <a href={`tel:${(CONTENT.footer.phone || CONTENT.footer.contact.phone).replace(/\s/g, '')}`} className="bg-black text-white px-6 py-3 rounded-full hover:scale-105 transition-all">{CONTENT.footer.phone || CONTENT.footer.contact.phone}</a>
+            <a href={`tel:${(CONTENT.footer.phone || CONTENT.footer.contact?.phone || '').replace(/\s/g, '')}`} className="bg-black text-white px-6 py-3 rounded-full hover:scale-105 transition-all">{CONTENT.footer.phone || CONTENT.footer.contact?.phone}</a>
           </div>
         </div>
       </footer>
@@ -351,7 +359,7 @@ const App = () => {
       <AIConsultant />
 
       {toast && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none transition-all duration-700 ${toast.isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100 animate-spring'}`}>
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-full max-w-[420px] px-6 pointer-events-none transition-all duration-700 ${toast.isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
           <div className={`p-5 rounded-[2.5rem] shadow-[0_25px_60px_-10px_rgba(0,0,0,0.2)] flex items-center space-x-5 border backdrop-blur-3xl ${toast.type === 'success' ? 'bg-[#1C1C1E] text-white border-white/10' : 'bg-[#FF3B30] text-white border-white/20'}`}>
             <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'success' ? 'bg-blue-500/20 shadow-lg' : 'bg-white/20'}`}>
               <i className={`fas ${toast.type === 'success' ? 'fa-check' : 'fa-exclamation-triangle'} text-lg`}></i>
@@ -366,9 +374,9 @@ const App = () => {
 
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
-          <div className="bg-white/95 backdrop-blur-3xl rounded-[32px] p-10 w-full max-w-md shadow-2xl relative border border-white/50 animate-spring">
-            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-8 right-8 text-gray-400 hover:text-black transition-colors tap-active"><i className="fas fa-times text-xl"></i></button>
-            <h2 className="text-3xl font-extrabold tracking-tight mb-8">Kirish</h2>
+          <div className="bg-white/95 backdrop-blur-3xl rounded-[32px] p-10 w-full max-w-md shadow-2xl relative border border-white/50">
+            <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-8 right-8 text-gray-400 hover:text-black transition-colors"><i className="fas fa-times text-xl"></i></button>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-8 text-slate-900">Kirish</h2>
             <div className="space-y-5">
                <div className="space-y-2">
                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">To'liq ism</label>
@@ -384,7 +392,7 @@ const App = () => {
                     className="w-full h-16 px-6 rounded-2xl bg-gray-50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-lg text-slate-900" 
                   />
                 </div>
-               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest tap-active shadow-xl mt-4 active:scale-95 transition-all">Davom etish</button>
+               <button onClick={handleLoginSubmit} className="w-full h-16 bg-black text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl mt-4 active:scale-95 transition-all">Davom etish</button>
             </div>
           </div>
         </div>
