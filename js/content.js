@@ -54,8 +54,8 @@ export const CONTENT = {
   locations: {
     title: "Bizning Manzil",
     subtitle: "Markaziy filial va ofis.",
-    phone: "+998970200107",
-    phone_display: "+998 97 020 01 07",
+    phone: "+998958850107",
+    phone_display: "+998 95 885 01 07",
     cta: "Hozir Qo'ng'iroq Qilish",
     map_src: "https://yandex.uz/map-widget/v1/?ll=70.893061,40.546387&z=16&l=map&pt=70.893061,40.546387,pm2rdm",
     map_region: "Farg'ona viloyati",
@@ -64,7 +64,7 @@ export const CONTENT = {
   footer: {
     brand: "Million KM",
     tagline: "Premium avto servis xizmati",
-    phone: "+998 97 020 01 07",
+    phone: "+998 95 885 01 07",
     nav: ["Bosh sahifa", "Biz haqimizda"]
   },
   infoModal: {
