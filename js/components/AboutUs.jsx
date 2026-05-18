@@ -198,7 +198,7 @@ const AboutUs = ({ onCheckStatus }) => {
               Statusni tekshirish
             </button>
             <a 
-              href="tel:+998770200107"
+              href="tel:+998958850107"
               className="px-10 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs md:text-sm hover:bg-blue-700 transition-colors active:scale-95 flex items-center justify-center"
             >
               <i className="fas fa-phone-alt mr-3"></i> Hozir qo'ng'iroq qilish
